@@ -8,11 +8,60 @@
 [![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org)
 [![Vercel](https://img.shields.io/badge/Vercel-Deployed-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com)
 
-**Nestora** is a modern, full-stack Paying Guest (PG) management and booking web application engineered to seamlessly connect Tenants, PG Owners, and Platform Administrators. It includes an embedded **Smart AI Assistant Robot** capable of answering questions, finding PGs, and retrieving live database records in English, Hindi, and Hinglish.
+**A next-generation, full-stack Paying Guest (PG) management platform with role-aware portals, automated rent tracking, and an intelligent multi-lingual AI chatbot assistant.**
 
-[Live Demo](#-deployment--hosting) • [Features](#-key-features) • [Installation](#-quick-start) • [Vercel Deployment](#-deploy-to-vercel)
+[Features](#-key-features) • [Project Overview](#-about-nestora) • [Architecture](#-architecture--pillars) • [Installation](#-quick-start) • [Vercel Deployment](#-deploy-to-vercel)
 
 </div>
+
+---
+
+## 📖 About Nestora
+
+Finding and managing Paying Guest (PG) accommodations is traditionally fragmented, relying on manual paper registers, unverified phone listings, scattered rent receipts, and disjointed communication between owners and tenants.
+
+**Nestora** is an end-to-end web platform designed to streamline the entire PG lifecycle:
+- **For Tenants**: A friction-free discovery and living experience — explore verified PGs with interactive nearby essentials (hospitals, grocery, transit), submit join requests, pay monthly rent digitally, download verified receipts, raise maintenance complaints, and get instant answers from an AI assistant.
+- **For PG Owners**: An all-in-one operational hub — manage multiple properties, monitor live room/bed occupancy, evaluate incoming tenant requests with single-click approvals, broadcast community notices, track rent collections, and resolve maintenance tickets.
+- **For Platform Administrators**: Complete ecosystem oversight — inspect user directories, verify newly listed PG properties, resolve platform reports and glitches, and review financial analytics.
+- **For Everyone**: An embedded **Nestora AI Robot** that speaks **English, Hindi, and Hinglish**, capable of analyzing database records in real time to answer questions about vacancies, dues, rent statuses, and rules.
+
+---
+
+## 🏛️ Architecture & Pillars
+
+```mermaid
+flowchart TD
+    subgraph Client ["Client Layer (Responsive Web Portals)"]
+        T["Tenant Portal\n(tenant.html)"]
+        O["Owner Portal\n(owner.html)"]
+        A["Admin Portal\n(admin.html)"]
+        R["AI Robot Assistant\n(robot.js / Voice & Chat)"]
+    end
+
+    subgraph Security ["Security & Auth Layer"]
+        JWT["JWT Bearer Token Auth"]
+        Bcrypt["Bcrypt Password Hashing"]
+        Isolation["Strict Role & Data Isolation"]
+    end
+
+    subgraph API ["Serverless Backend (FastAPI / api/index.py)"]
+        AuthRoutes["Auth & Profile APIs"]
+        PGRoutes["PG Search, Map & Rooms APIs"]
+        TenantRoutes["Join, Leave & Booking APIs"]
+        PaymentRoutes["Rent, Invoices & Receipt APIs"]
+        ComplaintRoutes["Complaints & Notices APIs"]
+        ChatbotRoutes["Role-Aware NLP & Action APIs"]
+    end
+
+    subgraph Data ["Database Layer"]
+        MySQL[("MySQL 8.0+ / Cloud DB\nUsers • PGs • Rooms • Bookings • Payments • Complaints")]
+    end
+
+    Client --> Security
+    Security --> API
+    API --> Data
+```
 
 ---
 
@@ -169,3 +218,4 @@ Nestora is pre-configured with `vercel.json` and `api/index.py` for full-stack d
 
 ## 📄 License
 This project is open-source and available under the [MIT License](LICENSE).
+
