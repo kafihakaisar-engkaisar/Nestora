@@ -1,0 +1,31 @@
+# Python virtual environment
+venv/
+backend/venv/
+ENV/
+env/
+.venv/
+
+# Python bytecode
+__pycache__/
+backend/__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# Vercel deployment artifacts
+.vercel/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Scratch and logs
+scratch/
+*.log
