@@ -77,3 +77,4 @@ On local machines, MySQL runs on `localhost:3306`. Because Vercel functions run 
    - `DB_NAME`: Your database name
    - `DB_PORT`: `3306` (or provided port)
    - `DB_SSL_DISABLED`: `false` (default)
+
