@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>Nestora | Owner</title>
+
+<link rel="stylesheet" href="style.css">
+
+
+</head>
+
+<body>
+
+
+<!-- NAVBAR -->
+
+<nav class="navbar">
+
+    <div class="logo">
+        Nestora
+    </div>
+
+    <div class="nav-right">
+
+        <a href="index.html" class="nav-box">
+            Home
+        </a>
+
+        <a href="tenant-auth.html" class="nav-box">
+            Tenant
+        </a>
+
+    </div>
+
+</nav>
+
+
+<!-- OWNER AUTH -->
+
+<main class="auth-page">
+
+    <div class="auth-card">
+
+        <h1>Owner Access</h1>
+
+        <p class="auth-subtitle">
+            Manage your PGs with Nestora
+        </p>
+
+
+        <!-- TABS -->
+
+        <div class="auth-tabs">
+
+            <button
+                id="ownerLoginTab"
+                class="auth-tab active"
+                onclick="showOwnerLogin()">
+                Sign In
+            </button>
+
+            <button
+                id="ownerSignupTab"
+                class="auth-tab"
+                onclick="showOwnerSignup()">
+                Sign Up
+            </button>
+
+        </div>
+
+
+        <!-- OWNER LOGIN -->
+
+        <form id="ownerLoginForm">
+
+            <div class="form-group">
+
+                <label>Owner ID</label>
+
+                <input
+                    type="text"
+                    id="ownerLoginId"
+                    placeholder="Enter Owner ID"
+                    required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Password</label>
+
+                <input
+                    type="password"
+                    id="ownerLoginPassword"
+                    placeholder="Enter Password"
+                    required>
+
+            </div>
+
+
+            <button type="submit" class="auth-button">
+                Sign In
+            </button>
+
+        </form>
+
+
+        <!-- OWNER SIGNUP -->
+
+        <form id="ownerSignupForm" style="display: none;">
+
+            <div class="form-group">
+
+                <label>Full Name</label>
+
+                <input
+                    type="text"
+                    id="ownerSignupName"
+                    placeholder="Enter your name"
+                    required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Phone</label>
+
+                <input
+                    type="tel"
+                    id="ownerSignupPhone"
+                    placeholder="Enter phone number"
+                    required>
+
+            </div>
+
+
+    <div class="form-group">
+<label for="ownerSignupPgName" >
+        🏢 PG Name *
+    </label>
+    <input
+        type="text"
+        id="ownerSignupPgName"
+        placeholder="e.g. Mannat Girls PG, Nemat Girls PG, Nestora Comfort Stay"
+        required>
+</div>
+<div class="form-group">
+                <label>Email</label>
+
+                <input
+                    type="email"
+                    id="ownerSignupEmail"
+                    placeholder="Enter email"
+                    required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Address</label>
+
+                <textarea
+                    id="ownerSignupAddress"
+                    placeholder="Enter your address"
+                    required></textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Password</label>
+
+                <input
+                    type="password"
+                    id="ownerSignupPassword"
+                    placeholder="Create password"
+                    required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Confirm Password</label>
+
+                <input
+                    type="password"
+                    id="ownerSignupConfirmPassword"
+                    placeholder="Confirm password"
+                    required>
+
+            </div>
+
+
+            <button type="submit" class="auth-button">
+                Create Owner Account
+            </button>
+
+        </form>
+
+
+        <p id="ownerMessage" class="message"></p>
+
+    </div>
+
+</main>
+
+
+<script src="app.js"></script>
+<script src="robot.js"></script>
+
+</body>
+
+</html>

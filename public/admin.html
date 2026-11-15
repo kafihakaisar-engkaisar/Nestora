@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nestora | Master Admin Panel</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-badge-tag {
+            font-size: 11px;
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+            vertical-align: middle;
+            margin-left: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid #fecaca;
+        }
+
+        .admin-progress-bar {
+            background: #e2e8f0;
+            border-radius: 9999px;
+            height: 8px;
+            width: 100%;
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: middle;
+            margin-top: 4px;
+        }
+
+        .admin-progress-fill {
+            height: 100%;
+            border-radius: 9999px;
+            background: #2563eb;
+            transition: width 0.3s;
+        }
+
+        .admin-progress-fill.green { background: #16a34a; }
+        .admin-progress-fill.amber { background: #d97706; }
+        .admin-progress-fill.red { background: #dc2626; }
+
+        .report-section-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .report-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printableAdminReportArea, #printableAdminReportArea * {
+                visibility: visible;
+            }
+            #printableAdminReportArea {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================================
+         NAVBAR
+    ========================================== -->
+    <nav class="dashboard-navbar">
+        <div class="dashboard-logo">
+            Nestora <span class="admin-badge-tag">Master Admin</span>
+        </div>
+
+        <div class="user-area">
+            <div class="user-info">
+                <strong id="adminName">System Administrator</strong>
+                <span id="adminId">ADM1001</span>
+            </div>
+            <button class="logout-btn" onclick="logoutAdmin()">
+                Logout 🚪
+            </button>
+        </div>
+    </nav>
+
+    <!-- =========================================
+         DASHBOARD LAYOUT
+    ========================================== -->
+    <div class="dashboard-layout">
+
+        <!-- =========================================
+             ADMIN SIDEBAR
+        ========================================== -->
+        <aside class="sidebar">
+            <div class="sidebar-title">Platform Governance</div>
+
+            <button class="sidebar-item active" onclick="showAdminSection('admin-dashboard')">
+                🏠 Dashboard
+            </button>
+
+            <button class="sidebar-item" onclick="showAdminSection('admin-tenants')">
+                👥 All Tenants
+            </button>
+
+            <button class="sidebar-item" onclick="showAdminSection('admin-owners')">
+                🏢 All Owners
+            </button>
+
+            <button class="sidebar-item" onclick="showAdminSection('admin-reports')">
+                📊 Reports & Analytics
+            </button>
+
+            <button class="sidebar-item" onclick="showAdminSection('admin-pgs')">
+                🏘️ All Properties
+            </button>
+
+            <button class="sidebar-item" onclick="showAdminSection('admin-complaints')">
+                📝 System Complaints
+            </button>
+
+            <button class="sidebar-item" onclick="showAdminSection('admin-profile')">
+                👤 Admin Profile
+            </button>
+
+            <button class="sidebar-item logout-sidebar-item" onclick="logoutAdmin()">
+                🚪 Logout
+            </button>
+        </aside>
+
+        <!-- =========================================
+             MAIN CONTENT AREA
+        ========================================== -->
+        <main class="dashboard-content">
+
+            <!-- =========================================
+                 1. ADMIN DASHBOARD
+            ========================================== -->
+            <section id="admin-dashboard" class="dashboard-section active-section">
+                <div class="section-header-row">
+                    <div>
+                        <h1>Master Administration</h1>
+                        <p class="section-subtitle">Platform-wide overview of all tenants, owners, properties, revenue and service operations.</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="primary-dashboard-btn" onclick="showAdminSection('admin-reports')">
+                            📊 View Full Reports
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 8 High-Level KPI Summary Cards -->
+                <div class="owner-stats-grid" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="owner-kpi-card" onclick="showAdminSection('admin-tenants')">
+                        <div class="kpi-icon teal">👥</div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Total Tenants</span>
+                            <strong class="kpi-value" id="adminStatTenants">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="owner-kpi-card" onclick="showAdminSection('admin-owners')">
+                        <div class="kpi-icon purple">🏢</div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Total Owners</span>
+                            <strong class="kpi-value" id="adminStatOwners">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="owner-kpi-card" onclick="showAdminSection('admin-pgs')">
+                        <div class="kpi-icon blue">🏘️</div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Total Properties</span>
+                            <strong class="kpi-value" id="adminStatPgs">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="owner-kpi-card" onclick="showAdminSection('admin-reports')">
+                        <div class="kpi-icon green">💰</div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Platform Revenue</span>
+                            <strong class="kpi-value" id="adminStatRevenue">₹0</strong>
+                        </div>
+                    </div>
+
+                    <div class="owner-kpi-card" onclick="showAdminSection('admin-reports')">
+                        <div class="kpi-icon indigo">🚪</div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Total Rooms</span>
+                            <strong class="kpi-value" id="adminStatRooms">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="owner-kpi-card" onclick="showAdminSection('admin-reports')">
+                        <div class="kpi-icon orange">🛏️</div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Total Beds (Beds)</span>
+                            <strong class="kpi-value" id="adminStatBeds">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="owner-kpi-card" onclick="showAdminSection('admin-reports')">
+                        <div class="kpi-icon amber">📈</div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Occupancy Rate</span>
+                            <strong class="kpi-value" id="adminStatOccupancyRate">0%</strong>
+                        </div>
+                    </div>
+
+                    <div class="owner-kpi-card" onclick="showAdminSection('admin-complaints')">
+                        <div class="kpi-icon rose">📝</div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Open Complaints</span>
+                            <strong class="kpi-value" id="adminStatComplaints">0</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Two Column Row 1: Recent Tenants & Recent Owners -->
+                <div class="dashboard-two-col">
+                    <div class="dashboard-section-block">
+                        <div class="block-header">
+                            <h2>👥 Recent Tenant Registrations</h2>
+                            <a href="javascript:void(0)" onclick="showAdminSection('admin-tenants')" class="view-all-link">All Tenants →</a>
+                        </div>
+                        <div class="data-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tenant</th>
+                                        <th>Code</th>
+                                        <th>Contact</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminRecentTenants">
+                                    <tr><td colspan="4" class="text-center py-4 text-muted">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-section-block">
+                        <div class="block-header">
+                            <h2>🏢 Recent Owner Registrations</h2>
+                            <a href="javascript:void(0)" onclick="showAdminSection('admin-owners')" class="view-all-link">All Owners →</a>
+                        </div>
+                        <div class="data-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Owner</th>
+                                        <th>Code</th>
+                                        <th>PGs</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminRecentOwners">
+                                    <tr><td colspan="4" class="text-center py-4 text-muted">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Two Column Row 2: Recent Payments & Recent Complaints -->
+                <div class="dashboard-two-col">
+                    <div class="dashboard-section-block">
+                        <div class="block-header">
+                            <h2>💳 Platform Transactions</h2>
+                            <a href="javascript:void(0)" onclick="showAdminSection('admin-reports')" class="view-all-link">Financial Report →</a>
+                        </div>
+                        <div class="data-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tenant</th>
+                                        <th>PG Name</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminRecentPayments">
+                                    <tr><td colspan="4" class="text-center py-4 text-muted">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-section-block">
+                        <div class="block-header">
+                            <h2>📝 Recent Issues Filed</h2>
+                            <a href="javascript:void(0)" onclick="showAdminSection('admin-complaints')" class="view-all-link">All Complaints →</a>
+                        </div>
+                        <div class="data-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Reporter</th>
+                                        <th>Role</th>
+                                        <th>Subject</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminRecentComplaints">
+                                    <tr><td colspan="4" class="text-center py-4 text-muted">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =========================================
+                 2. ALL TENANTS LIST
+            ========================================== -->
+            <section id="admin-tenants" class="dashboard-section">
+                <div class="section-header-row">
+                    <div>
+                        <h1>All Registered Tenants</h1>
+                        <p class="section-subtitle">Complete directory of all tenants registered across all properties in Nestora.</p>
+                    </div>
+                </div>
+
+                <div class="filter-search-bar-double">
+                    <input type="text" id="adminTenantSearch" placeholder="Search by name, ID, phone, email or password..." oninput="filterAdminTenants()">
+                    <select id="adminTenantStatusFilter" onchange="filterAdminTenants()">
+                        <option value="all">All Occupancy Statuses</option>
+                        <option value="active">Living in PG (Active/Approved)</option>
+                        <option value="registered">Registered / Not Allocated</option>
+                    </select>
+                </div>
+
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Tenant ID</th>
+                                <th>Password</th>
+                                <th>Tenant Name</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>Allocated Property</th>
+                                <th>Room & Bed</th>
+                                <th>Joined</th>
+                                <th>Rent</th>
+                                <th>Total Paid</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTenantsTableBody">
+                            <tr><td colspan="12" class="text-center py-4 text-muted">Loading tenants list...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- =========================================
+                 3. ALL OWNERS LIST
+            ========================================== -->
+            <section id="admin-owners" class="dashboard-section">
+                <div class="section-header-row">
+                    <div>
+                        <h1>All PG Owners</h1>
+                        <p class="section-subtitle">Directory of all verified PG property owners, capacity, active tenants and revenue.</p>
+                    </div>
+                </div>
+
+                <div class="filter-search-bar">
+                    <input type="text" id="adminOwnerSearch" placeholder="Search by owner name, ID, phone, email or password..." oninput="filterAdminOwners()">
+                </div>
+
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Owner ID</th>
+                                <th>Password</th>
+                                <th>Owner Name</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>Properties Managed</th>
+                                <th>Rooms</th>
+                                <th>Total Beds</th>
+                                <th>Active Tenants</th>
+                                <th>Total Revenue</th>
+                                <th>Registered</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminOwnersTableBody">
+                            <tr><td colspan="12" class="text-center py-4 text-muted">Loading owners list...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- =========================================
+                 4. REPORTS & ANALYTICS
+            ========================================== -->
+            <section id="admin-reports" class="dashboard-section">
+                <div class="section-header-row">
+                    <div>
+                        <h1>System Reports & Analytics</h1>
+                        <p class="section-subtitle">Consolidated financial, occupancy and operational intelligence across Nestora.</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="primary-dashboard-btn" onclick="openAdminPrintReportModal()">
+                            🖨️ Export Official Report
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Report Section 1: Financial & Revenue -->
+                <div class="report-section-card">
+                    <div class="report-card-title">
+                        <span>💰 Financial & Revenue Analytics</span>
+                        <span id="reportGenTime" style="font-size:12px; font-weight:400; color:#64748b;">-</span>
+                    </div>
+
+                    <div class="payment-stats-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom:20px;">
+                        <div class="payment-kpi-card green">
+                            <span class="pay-kpi-label">Lifetime Revenue</span>
+                            <strong class="pay-kpi-val" id="repTotalRev">₹0</strong>
+                        </div>
+                        <div class="payment-kpi-card blue">
+                            <span class="pay-kpi-label">Current Month Collection</span>
+                            <strong class="pay-kpi-val" id="repThisMonthRev">₹0</strong>
+                        </div>
+                        <div class="payment-kpi-card yellow">
+                            <span class="pay-kpi-label">Previous Month Collection</span>
+                            <strong class="pay-kpi-val" id="repLastMonthRev">₹0</strong>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-two-col">
+                        <div>
+                            <h3 style="font-size:15px; margin-bottom:10px; color:#0f172a;">Collections by Payment Method</h3>
+                            <div class="data-table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Method</th>
+                                            <th>Transactions</th>
+                                            <th>Total Collected (₹)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="repMethodTable">
+                                        <tr><td colspan="3" class="text-center py-3 text-muted">Loading...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 style="font-size:15px; margin-bottom:10px; color:#0f172a;">Top Revenue Generating Properties</h3>
+                            <div class="data-table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Property</th>
+                                            <th>Owner</th>
+                                            <th>Total Collected (₹)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="repPgRankTable">
+                                        <tr><td colspan="3" class="text-center py-3 text-muted">Loading...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Report Section 2: Occupancy & Capacity -->
+                <div class="report-section-card">
+                    <div class="report-card-title">
+                        <span>🛏️ Capacity & Occupancy Breakdown</span>
+                    </div>
+
+                    <div class="payment-stats-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom:20px;">
+                        <div class="payment-kpi-card indigo">
+                            <span class="pay-kpi-label">Total Beds in Platform</span>
+                            <strong class="pay-kpi-val" id="repTotalBeds">0</strong>
+                        </div>
+                        <div class="payment-kpi-card red">
+                            <span class="pay-kpi-label">Occupied Beds</span>
+                            <strong class="pay-kpi-val" id="repOccupiedBeds">0</strong>
+                        </div>
+                        <div class="payment-kpi-card green">
+                            <span class="pay-kpi-label">Available Vacancies</span>
+                            <strong class="pay-kpi-val" id="repAvailableBeds">0</strong>
+                        </div>
+                        <div class="payment-kpi-card amber">
+                            <span class="pay-kpi-label">System Occupancy Rate</span>
+                            <strong class="pay-kpi-val" id="repOccRate">0%</strong>
+                        </div>
+                    </div>
+
+                    <h3 style="font-size:15px; margin-bottom:10px; color:#0f172a;">Property-Wise Capacity Breakdown</h3>
+                    <div class="data-table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Property Code</th>
+                                    <th>Property Name</th>
+                                    <th>Owner</th>
+                                    <th>Rooms</th>
+                                    <th>Total Beds</th>
+                                    <th>Occupied</th>
+                                    <th>Available</th>
+                                    <th>Occupancy Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody id="repOccPgTable">
+                                <tr><td colspan="8" class="text-center py-4 text-muted">Loading breakdown...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Report Section 3: Complaints & Operations -->
+                <div class="report-section-card">
+                    <div class="report-card-title">
+                        <span>📝 Customer Service & Maintenance Resolution</span>
+                    </div>
+
+                    <div class="payment-stats-grid" style="grid-template-columns: repeat(4, 1fr);">
+                        <div class="payment-kpi-card blue">
+                            <span class="pay-kpi-label">Total Filed</span>
+                            <strong class="pay-kpi-val" id="repTotalComps">0</strong>
+                        </div>
+                        <div class="payment-kpi-card yellow">
+                            <span class="pay-kpi-label">Submitted / Pending</span>
+                            <strong class="pay-kpi-val" id="repSubComps">0</strong>
+                        </div>
+                        <div class="payment-kpi-card amber">
+                            <span class="pay-kpi-label">In Progress</span>
+                            <strong class="pay-kpi-val" id="repInProgComps">0</strong>
+                        </div>
+                        <div class="payment-kpi-card green">
+                            <span class="pay-kpi-label">Resolution Rate</span>
+                            <strong class="pay-kpi-val" id="repResRate">0%</strong>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =========================================
+                 5. ALL PROPERTIES (ALL PGs)
+            ========================================== -->
+            <section id="admin-pgs" class="dashboard-section">
+                <div class="section-header-row">
+                    <div>
+                        <h1>All Properties (PGs)</h1>
+                        <p class="section-subtitle">Platform-wide property catalog and approval status control.</p>
+                    </div>
+                </div>
+
+                <div class="filter-search-bar-double">
+                    <input type="text" id="adminPgSearch" placeholder="Search by PG name, owner, city or ID..." oninput="filterAdminPgs()">
+                    <select id="adminPgStatusFilter" onchange="filterAdminPgs()">
+                        <option value="all">All Statuses</option>
+                        <option value="approved">Approved / Active</option>
+                        <option value="pending">Pending Review</option>
+                        <option value="rejected">Rejected / Inactive</option>
+                    </select>
+                </div>
+
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>PG Code</th>
+                                <th>Property Name</th>
+                                <th>Owner</th>
+                                <th>City</th>
+                                <th>Type</th>
+                                <th>Rent / Mo</th>
+                                <th>Rooms</th>
+                                <th>Beds</th>
+                                <th>Occupancy</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminPgsTableBody">
+                            <tr><td colspan="11" class="text-center py-4 text-muted">Loading properties...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- =========================================
+                 6. ALL SYSTEM COMPLAINTS & APP REPORTS
+            ========================================== -->
+            <section id="admin-complaints" class="dashboard-section">
+                <div class="section-header-row">
+                    <div>
+                        <h1>System & App Complaints</h1>
+                        <p class="section-subtitle">Review, track and resolve platform feedback, app bugs, and technical issues submitted by tenants and owners.</p>
+                    </div>
+                </div>
+
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Report ID</th>
+                                <th>Reporter</th>
+                                <th>Role</th>
+                                <th>Contact</th>
+                                <th>Category</th>
+                                <th>Subject & Details</th>
+                                <th>Reported On</th>
+                                <th>Status</th>
+                                <th>Admin Notes</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminComplaintsTableBody">
+                            <tr><td colspan="10" class="text-center py-4 text-muted">Loading system complaints...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- =========================================
+                 7. ADMIN PROFILE
+            ========================================== -->
+            <section id="admin-profile" class="dashboard-section">
+                <div class="section-header-row">
+                    <div>
+                        <h1>Administrator Profile & Security</h1>
+                        <p class="section-subtitle">Master credentials and access governance.</p>
+                    </div>
+                </div>
+
+                <div class="profile-two-col">
+                    <div class="profile-card">
+                        <div class="profile-card-header">
+                            <h2>Profile Details</h2>
+                        </div>
+                        <form onsubmit="submitUpdateAdminProfile(event)" class="profile-form-padding">
+                            <div class="form-group-custom">
+                                <label>Admin ID</label>
+                                <input type="text" id="profAdminId" readonly class="input-readonly">
+                            </div>
+                            <div class="form-group-custom">
+                                <label>Administrator Name</label>
+                                <input type="text" id="profAdminName" required>
+                            </div>
+                            <div class="form-group-custom">
+                                <label>Email Address</label>
+                                <input type="email" id="profAdminEmail" readonly class="input-readonly">
+                            </div>
+                            <div class="form-group-custom">
+                                <label>Emergency Contact Phone</label>
+                                <input type="tel" id="profAdminPhone" required>
+                            </div>
+                            <button type="submit" class="primary-dashboard-btn mt-3">
+                                💾 Update Profile
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="profile-card">
+                        <div class="profile-card-header">
+                            <h2>Change Master Password</h2>
+                        </div>
+                        <form onsubmit="submitChangeAdminPassword(event)" class="profile-form-padding">
+                            <div class="form-group-custom">
+                                <label>Current Master Password</label>
+                                <input type="password" id="adminOldPwd" required placeholder="Enter current password">
+                            </div>
+                            <div class="form-group-custom">
+                                <label>New Master Password</label>
+                                <input type="password" id="adminNewPwd" required minlength="6" placeholder="At least 6 characters">
+                            </div>
+                            <div class="form-group-custom">
+                                <label>Confirm New Master Password</label>
+                                <input type="password" id="adminConfirmPwd" required minlength="6" placeholder="Repeat new password">
+                            </div>
+                            <div id="adminPwdChangeMsg" class="form-feedback-msg"></div>
+                            <button type="submit" class="primary-dashboard-btn mt-3" style="background:#dc2626;">
+                                🔒 Save Master Password
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- =========================================
+         ADMIN ACTION MODALS
+    ========================================== -->
+
+    <!-- Modal 1: Tenant Full Dossier -->
+    <div id="adminTenantModal" class="modal-backdrop hidden">
+        <div class="modal-box modal-lg">
+            <div class="modal-header">
+                <h2>Tenant Dossier & History</h2>
+                <button class="modal-close-btn" onclick="closeOwnerModal('adminTenantModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="adminTenantModalContent">
+                <div class="text-center py-4 text-muted">Loading dossier...</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="primary-dashboard-btn" onclick="closeOwnerModal('adminTenantModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Owner Full Dossier -->
+    <div id="adminOwnerModal" class="modal-backdrop hidden">
+        <div class="modal-box modal-lg">
+            <div class="modal-header">
+                <h2>Owner Dossier & Properties</h2>
+                <button class="modal-close-btn" onclick="closeOwnerModal('adminOwnerModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="adminOwnerModalContent">
+                <div class="text-center py-4 text-muted">Loading dossier...</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="primary-dashboard-btn" onclick="closeOwnerModal('adminOwnerModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3: Printable System Report -->
+    <div id="adminPrintReportModal" class="modal-backdrop hidden">
+        <div class="modal-box modal-lg">
+            <div class="modal-header">
+                <h2>Official System Report</h2>
+                <button class="modal-close-btn" onclick="closeOwnerModal('adminPrintReportModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="printableAdminReportArea" style="background:#ffffff; padding:24px; border:1px solid #cbd5e1; border-radius:12px;">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary-custom" onclick="closeOwnerModal('adminPrintReportModal')">Close</button>
+                <button type="button" class="primary-dashboard-btn" onclick="window.print()">🖨️ Print Report</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 4: PG Status Update -->
+    <div id="adminPgStatusModal" class="modal-backdrop hidden">
+        <div class="modal-box modal-sm">
+            <div class="modal-header">
+                <h2>Update Property Status</h2>
+                <button class="modal-close-btn" onclick="closeOwnerModal('adminPgStatusModal')">&times;</button>
+            </div>
+            <form onsubmit="submitAdminPgStatus(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="modalAdminPgId">
+                    <div class="form-group-custom">
+                        <label>Property Name</label>
+                        <input type="text" id="modalAdminPgName" readonly class="input-readonly">
+                    </div>
+                    <div class="form-group-custom">
+                        <label>Status</label>
+                        <select id="modalAdminPgStatusSelect">
+                            <option value="approved">Approved / Active</option>
+                            <option value="pending">Pending Review</option>
+                            <option value="rejected">Rejected / Deactivated</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary-custom" onclick="closeOwnerModal('adminPgStatusModal')">Cancel</button>
+                    <button type="submit" class="primary-dashboard-btn">Save Status</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 5: Complaint Status Update -->
+    <div id="adminComplaintStatusModal" class="modal-backdrop hidden">
+        <div class="modal-box modal-sm">
+            <div class="modal-header">
+                <h2>Admin Complaint Resolution</h2>
+                <button class="modal-close-btn" onclick="closeOwnerModal('adminComplaintStatusModal')">&times;</button>
+            </div>
+            <form onsubmit="submitAdminComplaintStatus(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="modalAdminComplaintId">
+                    <div class="form-group-custom">
+                        <label>Complaint Ref</label>
+                        <input type="text" id="modalAdminComplaintRef" readonly class="input-readonly">
+                    </div>
+                    <div class="form-group-custom">
+                        <label>Status</label>
+                        <select id="modalAdminComplaintSelect">
+                            <option value="pending">Pending</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="resolved">Resolved</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                    </div>
+                    <div class="form-group-custom">
+                        <label>Admin Resolution Notes</label>
+                        <textarea id="modalAdminComplaintNotes" rows="3" placeholder="Enter notes or explanation for the reporter..." style="width: 100%; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; font-size: 13px; font-family: inherit;"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+                    <button type="button" class="btn-secondary-custom" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca;" onclick="deleteAdminComplaintFromModal()">🗑️ Delete</button>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="btn-secondary-custom" onclick="closeOwnerModal('adminComplaintStatusModal')">Cancel</button>
+                        <button type="submit" class="primary-dashboard-btn">Update Status</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="robot.js"></script>
+</body>
+
+</html>
+

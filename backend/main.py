@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
@@ -25,6 +26,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.exception_handler(mysql.connector.Error)
+def mysql_exception_handler(request: Request, exc: mysql.connector.Error):
+    return JSONResponse(
+        status_code=503,
+        content={
+            "status": "error",
+            "message": "Database connection error. On Vercel, please set DATABASE_URL (or DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) in your Vercel Project Settings > Environment Variables.",
+            "detail": str(exc)
+        }
+    )
 
 
 # =========================================

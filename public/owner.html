@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nestora | Owner Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- =========================================
+         NAVBAR
+    ========================================== -->
+    <nav class="dashboard-navbar">
+        <div class="dashboard-logo">
+            Nestora <span class="owner-badge-tag">Owner Panel</span>
+        </div>
+
+        <div class="user-area">
+            <!-- Live Refresh Button -->
+            <button class="live-refresh-btn" id="btnLiveRefreshOwner" onclick="manualRefreshOwnerData()" title="Live Refresh Dashboard & Requests">
+                <span class="live-pulse-dot"></span>
+                <span>Live Refresh 🔄</span>
+            </button>
+
+            <!-- Quick Owner Account Switcher -->
+            <div class="owner-switcher-box" title="Switch active PG Owner account">
+                <span class="owner-switcher-label">👤 Active Owner:</span>
+                <select id="ownerAccountSwitcher" onchange="switchOwnerAccount(this.value)">
+                    <option value="3">OWN1002 - kafiha kaisar</option>
+                    <option value="2">OWN1001 - Rahul Sharma</option>
+                    <option value="4">OWN1003 - kafiha kaisar</option>
+                    <option value="5">OWN1004 - Ananya Roy</option>
+                </select>
+            </div>
+
+            <div class="user-info">
+                <strong id="ownerName">Owner</strong>
+                <span id="ownerId">OWN0000</span>
+            </div>
+            <button class="logout-btn" onclick="logoutOwner()">
+                Logout 🚪
+            </button>
+        </div>
+    </nav>
+
+    <!-- =========================================
+         DASHBOARD LAYOUT
+    ========================================== -->
+    <div class="dashboard-layout">
+
+        <!-- =========================================
+             SIDEBAR (13 Items)
+        ========================================== -->
+        <aside class="sidebar">
+            <div class="sidebar-title">Property Manager</div>
+
+            <button class="sidebar-item active" onclick="showOwnerSection('owner-dashboard')">
+                🏠 Dashboard
+            </button>
+
+            <button class="sidebar-item" onclick="showOwnerSection('mypgs')">
+                🏢 My PGs
+            </button>
+
+            <button class="sidebar-item" onclick="showOwnerSection('rooms-beds')">
+                🛏️ Rooms & Beds
+            </button>
+
+            <button class="sidebar-item" onclick="showOwnerSection('tenant-requests')">
+                👥 Join Requests
+            </button>
+
+            <button class="sidebar-item" onclick="showOwnerSection('tenants')">
+                👤 Tenants
+            </button>
+
+            <button class="sidebar-item" onclick="showOwnerSection('bookings')">
+                📅 Bookings
+            </button>
+
+            <button class="sidebar-item" onclick="showOwnerSection('payments')">
+                💳 Payments
+            </button>
+
+            <button class="sidebar-item" onclick="showOwnerSection('receipts')">
+                🧾 Receipts
+            </button>
+
+            <button class="sidebar-item" onclick="showOwnerSection('notices')">
+                📢 Notices
+            </button>
+
+            <button class="sidebar-item" onclick="showOwnerSection('complaints')">
+                📝 Complaints
+            </button>
+
+            <button class="sidebar-item" onclick="showOwnerSection('reviews')">
+                ⭐ Reviews
+            </button>
+
+            <button class="sidebar-item" onclick="showOwnerSection('owner-profile')">
+                👤 Profile
+            </button>
+
+            <button class="sidebar-item" onclick="showOwnerSection('owner-app-reports')">
+                🛠️ Report App Issue
+            </button>
+
+            <button class="sidebar-item logout-sidebar-item" onclick="logoutOwner()">
+                🚪 Logout
+            </button>
+        </aside>
+
+        <!-- =========================================
+             MAIN CONTENT AREA
+        ========================================== -->
+        <main class="dashboard-content">
+
+            <!-- =========================================
+                 1. DASHBOARD
+            ========================================== -->
+            <section id="owner-dashboard" class="dashboard-section active-section">
+                <div class="section-header-row">
+                    <div>
+                        <h1>Owner Dashboard</h1>
+                        <p class="section-subtitle">Real-time occupancy, financial performance and tenant activities.</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="primary-dashboard-btn" onclick="openAddPgModal()">
+                            ➕ Add PG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Cross-Owner Pending Notification Banner -->
+                <div id="ownerCrossPendingAlert" class="owner-cross-alert hidden"></div>
+
+                <!-- 10 Summary KPI Cards -->
+                <div class="owner-stats-grid">
+                    <div class="owner-kpi-card" onclick="showOwnerSection('mypgs')">
+                        <div class="kpi-icon blue">🏢</div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Total PGs</span>
+                            <strong class="kpi-value" id="ownerStatPgs">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="owner-kpi-card" onclick="showOwnerSection('rooms-beds')">
+                        <div class="kpi-icon purple">🚪</div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Total Rooms</span>
+                            <strong class="kpi-value" id="ownerStatRooms">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="owner-kpi-card" onclick="showOwnerSection('rooms-beds')">
+                        <div class="kpi-icon indigo">🛏️</div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Total Beds</span>
+                            <strong class="kpi-value" id="ownerStatBeds">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="owner-kpi-card" onclick="showOwnerSection('rooms-beds')">
+                        <div class="kpi-icon orange">🔒</div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Occupied Beds</span>
+                            <strong class="kpi-value" id="ownerStatOccupied">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="owner-kpi-card" onclick="showOwnerSection('rooms-beds')">
+                        <div class="kpi-icon green">🔓</div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Available Beds</span>
+                            <strong class="kpi-value" id="ownerStatAvailable">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="owner-kpi-card" onclick="showOwnerSection('tenants')">
+                        <div class="kpi-icon teal">👥</div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Active Tenants</span>
+                            <strong class="kpi-value" id="ownerStatTenants">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="owner-kpi-card" onclick="showOwnerSection('tenant-requests')">
+                        <div class="kpi-icon amber">⏳</div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Pending Requests</span>
+                            <strong class="kpi-value" id="ownerStatRequests">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="owner-kpi-card" onclick="showOwnerSection('payments')">
+                        <div class="kpi-icon yellow">💳</div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Pending Payments</span>
+                            <strong class="kpi-value" id="ownerStatPendingPayments">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="owner-kpi-card" onclick="showOwnerSection('payments')">
+                        <div class="kpi-icon red">⚠️</div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Overdue Payments</span>
+                            <strong class="kpi-value" id="ownerStatOverduePayments">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="owner-kpi-card" onclick="showOwnerSection('complaints')">
+                        <div class="kpi-icon rose">📝</div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Open Complaints</span>
+                            <strong class="kpi-value" id="ownerStatComplaints">0</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Join Requests Section -->
+                <div class="dashboard-section-block">
+                    <div class="block-header">
+                        <h2>👥 Recent Join Requests</h2>
+                        <a href="javascript:void(0)" onclick="showOwnerSection('tenant-requests')" class="view-all-link">View All Requests →</a>
+                    </div>
+                    <div class="data-table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Tenant</th>
+                                    <th>Tenant ID</th>
+                                    <th>PG Name</th>
+                                    <th>Request Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboardRecentRequests">
+                                <tr>
+                                    <td colspan="6" class="text-center py-4">Loading requests...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Two Column Row: Recent Payments & Recent Complaints -->
+                <div class="dashboard-two-col">
+                    <div class="dashboard-section-block">
+                        <div class="block-header">
+                            <h2>💳 Recent Payments</h2>
+                            <a href="javascript:void(0)" onclick="showOwnerSection('payments')" class="view-all-link">View All →</a>
+                        </div>
+                        <div class="data-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tenant</th>
+                                        <th>PG Name</th>
+                                        <th>Amount</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashboardRecentPayments">
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4">Loading payments...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-section-block">
+                        <div class="block-header">
+                            <h2>📝 Recent Complaints</h2>
+                            <a href="javascript:void(0)" onclick="showOwnerSection('complaints')" class="view-all-link">View All →</a>
+                        </div>
+                        <div class="data-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tenant</th>
+                                        <th>Room</th>
+                                        <th>Complaint</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashboardRecentComplaints">
+                                    <tr>
+                                        <td colspan="4" class="text-center py-4">Loading complaints...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =========================================
+                 2. MY PGs (Property Management)
+            ========================================== -->
+            <section id="mypgs" class="dashboard-section">
+                <div class="section-header-row">
+                    <div>
+                        <h1>My PGs</h1>
+                        <p class="section-subtitle">Manage all properties owned by you. Add, edit, or configure rooms and pricing.</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="primary-dashboard-btn" onclick="openAddPgModal()">
+                            ➕ Add New PG
+                        </button>
+                    </div>
+                </div>
+
+                <div class="filter-search-bar">
+                    <input type="text" id="ownerPgSearchInput" placeholder="Search by PG name, city or address..." oninput="filterOwnerPgsList()">
+                </div>
+
+                <div id="ownerPgCardsContainer" class="owner-pg-cards-grid">
+                    <div class="empty-state">
+                        <div class="big-icon">🏢</div>
+                        <h2>Loading your PGs...</h2>
+                        <p>Fetching properties from database.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =========================================
+                 3. ROOMS & BEDS
+            ========================================== -->
+            <section id="rooms-beds" class="dashboard-section">
+                <div class="section-header-row">
+                    <div>
+                        <h1>Rooms & Beds Management</h1>
+                        <p class="section-subtitle">View and configure rooms, manage bed availability and live tenant allocations.</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="primary-dashboard-btn" onclick="openAddRoomModal()">
+                            ➕ Add Room
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PG Filter Dropdown -->
+                <div class="filter-bar-row">
+                    <div class="select-wrapper">
+                        <label for="roomsBedPgFilter"><strong>Filter by Property:</strong></label>
+                        <select id="roomsBedPgFilter" onchange="loadOwnerRoomsAndBeds()">
+                            <option value="all">All Properties</option>
+                        </select>
+                    </div>
+                    <div class="room-stats-summary" id="roomsBedsSummaryBar">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <div id="ownerRoomsListContainer" class="owner-rooms-container">
+                    <div class="empty-state">
+                        <div class="big-icon">🛏️</div>
+                        <h2>Loading Rooms & Beds...</h2>
+                        <p>Please wait while rooms are loaded.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =========================================
+                 4. JOIN REQUESTS
+            ========================================== -->
+            <section id="tenant-requests" class="dashboard-section">
+                <div class="section-header-row">
+                    <div>
+                        <h1>Tenant Join Requests</h1>
+                        <p class="section-subtitle">Process incoming tenant applications submitted via the Tenant Panel.</p>
+                    </div>
+                </div>
+
+                <!-- Cross-Owner Pending Notification Banner -->
+                <div id="ownerRequestsCrossAlert" class="owner-cross-alert hidden"></div>
+
+                <!-- Status Filter Tabs -->
+                <div class="filter-tabs-row">
+                    <button class="tab-chip active" onclick="filterOwnerRequests('all', this)">All Requests</button>
+                    <button class="tab-chip" onclick="filterOwnerRequests('pending', this)">Pending</button>
+                    <button class="tab-chip" onclick="filterOwnerRequests('approved', this)">Approved</button>
+                    <button class="tab-chip" onclick="filterOwnerRequests('rejected', this)">Rejected</button>
+                </div>
+
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Request ID</th>
+                                <th>Tenant Name</th>
+                                <th>Tenant ID</th>
+                                <th>PG Property</th>
+                                <th>Preferred Type</th>
+                                <th>Request Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ownerRequestsTableBody">
+                            <tr>
+                                <td colspan="8" class="text-center py-4">Loading requests...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- =========================================
+                 5. TENANTS
+            ========================================== -->
+            <section id="tenants" class="dashboard-section">
+                <div class="section-header-row">
+                    <div>
+                        <h1>Tenant Management</h1>
+                        <p class="section-subtitle">Active tenants living in your PG properties with contact and rent details.</p>
+                    </div>
+                </div>
+
+                <div class="filter-search-bar-double">
+                    <input type="text" id="tenantSearchInput" placeholder="Search by tenant name, phone, or ID..." oninput="filterOwnerTenantsList()">
+                    <select id="tenantPgFilter" onchange="filterOwnerTenantsList()">
+                        <option value="all">All Properties</option>
+                    </select>
+                </div>
+
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Tenant ID</th>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>PG Name</th>
+                                <th>Room</th>
+                                <th>Bed</th>
+                                <th>Joining Date</th>
+                                <th>Rent</th>
+                                <th>Payment</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ownerTenantsTableBody">
+                            <tr>
+                                <td colspan="11" class="text-center py-4">Loading tenants...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- =========================================
+                 6. BOOKINGS
+            ========================================== -->
+            <section id="bookings" class="dashboard-section">
+                <div class="section-header-row">
+                    <div>
+                        <h1>Bookings Management</h1>
+                        <p class="section-subtitle">Complete booking allocations across all your PG properties.</p>
+                    </div>
+                </div>
+
+                <!-- Status Filter Tabs -->
+                <div class="filter-tabs-row">
+                    <button class="tab-chip active" onclick="filterOwnerBookings('all', this)">All</button>
+                    <button class="tab-chip" onclick="filterOwnerBookings('approved', this)">Confirmed / Approved</button>
+                    <button class="tab-chip" onclick="filterOwnerBookings('pending', this)">Pending</button>
+                    <button class="tab-chip" onclick="filterOwnerBookings('completed', this)">Completed</button>
+                    <button class="tab-chip" onclick="filterOwnerBookings('cancelled', this)">Cancelled</button>
+                </div>
+
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>Tenant</th>
+                                <th>PG Name</th>
+                                <th>Room</th>
+                                <th>Bed</th>
+                                <th>Booking Date</th>
+                                <th>Monthly Rent</th>
+                                <th>Security Deposit</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ownerBookingsTableBody">
+                            <tr>
+                                <td colspan="10" class="text-center py-4">Loading bookings...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- =========================================
+                 7. PAYMENTS
+            ========================================== -->
+            <section id="payments" class="dashboard-section">
+                <div class="section-header-row">
+                    <div>
+                        <h1>Payments & Financials</h1>
+                        <p class="section-subtitle">Track rent collections, pending balances and record offline payments.</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="primary-dashboard-btn" onclick="openRecordPaymentModal()">
+                            ➕ Record Payment
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4 Financial KPI Cards -->
+                <div class="payment-stats-grid">
+                    <div class="payment-kpi-card green">
+                        <span class="pay-kpi-label">Total Collected</span>
+                        <strong class="pay-kpi-val" id="ownerPayTotalCollected">₹0</strong>
+                    </div>
+                    <div class="payment-kpi-card yellow">
+                        <span class="pay-kpi-label">Pending Amount</span>
+                        <strong class="pay-kpi-val" id="ownerPayPendingAmount">₹0</strong>
+                    </div>
+                    <div class="payment-kpi-card red">
+                        <span class="pay-kpi-label">Overdue Amount</span>
+                        <strong class="pay-kpi-val" id="ownerPayOverdueAmount">₹0</strong>
+                    </div>
+                    <div class="payment-kpi-card blue">
+                        <span class="pay-kpi-label">This Month's Collection</span>
+                        <strong class="pay-kpi-val" id="ownerPayMonthCollection">₹0</strong>
+                    </div>
+                </div>
+
+                <!-- Status Filter Tabs -->
+                <div class="filter-tabs-row">
+                    <button class="tab-chip active" onclick="filterOwnerPaymentsTab('all', this)">All</button>
+                    <button class="tab-chip" onclick="filterOwnerPaymentsTab('success', this)">Paid / Success</button>
+                    <button class="tab-chip" onclick="filterOwnerPaymentsTab('pending', this)">Pending</button>
+                    <button class="tab-chip" onclick="filterOwnerPaymentsTab('overdue', this)">Overdue</button>
+                </div>
+
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Txn ID</th>
+                                <th>Tenant</th>
+                                <th>PG Property</th>
+                                <th>Purpose / Month</th>
+                                <th>Amount</th>
+                                <th>Due Date</th>
+                                <th>Paid Date</th>
+                                <th>Method</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ownerPaymentsTableBody">
+                            <tr>
+                                <td colspan="9" class="text-center py-4">Loading payments...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- =========================================
+                 8. RECEIPTS
+            ========================================== -->
+            <section id="receipts" class="dashboard-section">
+                <div class="section-header-row">
+                    <div>
+                        <h1>Receipts Management</h1>
+                        <p class="section-subtitle">View and generate printable payment receipts for tenants.</p>
+                    </div>
+                </div>
+
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Receipt ID</th>
+                                <th>Txn ID</th>
+                                <th>Tenant</th>
+                                <th>PG Property</th>
+                                <th>Room / Bed</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Purpose</th>
+                                <th>Method</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ownerReceiptsTableBody">
+                            <tr>
+                                <td colspan="10" class="text-center py-4">Loading receipts...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- =========================================
+                 9. NOTICES
+            ========================================== -->
+            <section id="notices" class="dashboard-section">
+                <div class="section-header-row">
+                    <div>
+                        <h1>Notices & Announcements</h1>
+                        <p class="section-subtitle">Post important notices that immediately appear in tenants' portals.</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="primary-dashboard-btn" onclick="openCreateNoticeModal()">
+                            📢 Post New Notice
+                        </button>
+                    </div>
+                </div>
+
+                <div id="ownerNoticesListContainer" class="notices-cards-grid">
+                    <div class="empty-state">
+                        <div class="big-icon">📢</div>
+                        <h2>Loading Notices...</h2>
+                        <p>Please wait while notices are fetched.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =========================================
+                 10. COMPLAINTS
+            ========================================== -->
+            <section id="complaints" class="dashboard-section">
+                <div class="section-header-row">
+                    <div>
+                        <h1>Tenant Complaints</h1>
+                        <p class="section-subtitle">Address and resolve maintenance and service issues reported by tenants.</p>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 16px; padding: 10px 16px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; font-size: 13px; color: #166534; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                    <span>💡 <strong>Note:</strong> The table below displays PG maintenance grievances submitted by your tenants.</span>
+                    <a href="javascript:void(0)" onclick="showOwnerSection('owner-app-reports')" style="color: #15803d; font-weight: 700; text-decoration: underline;">Experiencing a bug or issue with the Nestora Platform? Report App Issue to Admin &rarr;</a>
+                </div>
+
+                <!-- Status Filter Tabs -->
+                <div class="filter-tabs-row">
+                    <button class="tab-chip active" onclick="filterOwnerComplaints('all', this)">All</button>
+                    <button class="tab-chip" onclick="filterOwnerComplaints('submitted', this)">Submitted</button>
+                    <button class="tab-chip" onclick="filterOwnerComplaints('in_progress', this)">In Progress</button>
+                    <button class="tab-chip" onclick="filterOwnerComplaints('resolved', this)">Resolved</button>
+                </div>
+
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Complaint ID</th>
+                                <th>Tenant</th>
+                                <th>PG Property</th>
+                                <th>Room</th>
+                                <th>Subject</th>
+                                <th>Description</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ownerComplaintsTableBody">
+                            <tr>
+                                <td colspan="9" class="text-center py-4">Loading complaints...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- =========================================
+                 11. REVIEWS
+            ========================================== -->
+            <section id="reviews" class="dashboard-section">
+                <div class="section-header-row">
+                    <div>
+                        <h1>Tenant Reviews & Ratings</h1>
+                        <p class="section-subtitle">Feedback and star ratings shared by verified tenants.</p>
+                    </div>
+                </div>
+
+                <!-- Average Rating Card -->
+                <div class="rating-overview-card">
+                    <div class="rating-big-score" id="ownerAvgRatingScore">0.0</div>
+                    <div>
+                        <div class="rating-stars-row" id="ownerAvgStarsRow">⭐⭐⭐⭐⭐</div>
+                        <div class="rating-count-text" id="ownerTotalReviewsCount">Based on 0 verified reviews</div>
+                    </div>
+                </div>
+
+                <div id="ownerReviewsListContainer" class="reviews-cards-grid">
+                    <div class="empty-state">
+                        <div class="big-icon">⭐</div>
+                        <h2>Loading Reviews...</h2>
+                        <p>Fetching tenant reviews.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =========================================
+                 12. OWNER PROFILE
+            ========================================== -->
+            <section id="owner-profile" class="dashboard-section">
+                <div class="section-header-row">
+                    <div>
+                        <h1>Owner Profile</h1>
+                        <p class="section-subtitle">Manage your personal information and account security.</p>
+                    </div>
+                </div>
+
+                <div class="profile-two-col">
+                    <!-- Profile Details & Edit Form -->
+                    <div class="profile-card">
+                        <div class="profile-card-header">
+                            <h2>Personal Information</h2>
+                        </div>
+                        <form id="ownerProfileForm" onsubmit="submitUpdateProfile(event)" class="profile-form-padding">
+                            <div class="form-group-custom">
+                                <label>Owner ID (Permanent)</label>
+                                <input type="text" id="profileOwnerId" readonly class="input-readonly">
+                            </div>
+                            <div class="form-group-custom">
+                                <label>Full Name</label>
+                                <input type="text" id="profileOwnerName" required>
+                            </div>
+                            <div class="form-group-custom">
+                                <label>Email Address</label>
+                                <input type="email" id="profileOwnerEmail" readonly class="input-readonly">
+                            </div>
+                            <div class="form-group-custom">
+                                <label>Phone Number</label>
+                                <input type="tel" id="profileOwnerPhone" required>
+                            </div>
+                            <div class="form-group-custom">
+                                <label>Office / Residential Address</label>
+                                <input type="text" id="profileOwnerAddress" placeholder="e.g. Sakchi, Jamshedpur">
+                            </div>
+                            <button type="submit" class="primary-dashboard-btn mt-3">
+                                💾 Save Changes
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Change Password Card -->
+                    <div class="profile-card">
+                        <div class="profile-card-header">
+                            <h2>Account Security</h2>
+                        </div>
+                        <form id="ownerChangePasswordForm" onsubmit="submitChangePassword(event)" class="profile-form-padding">
+                            <div class="form-group-custom">
+                                <label>Current Password</label>
+                                <input type="password" id="ownerOldPassword" required placeholder="Enter current password">
+                            </div>
+                            <div class="form-group-custom">
+                                <label>New Password</label>
+                                <input type="password" id="ownerNewPassword" required minlength="6" placeholder="At least 6 characters">
+                            </div>
+                            <div class="form-group-custom">
+                                <label>Confirm New Password</label>
+                                <input type="password" id="ownerConfirmPassword" required minlength="6" placeholder="Repeat new password">
+                            </div>
+                            <div id="passwordChangeMsg" class="form-feedback-msg"></div>
+                            <button type="submit" class="primary-dashboard-btn mt-3">
+                                🔒 Update Password
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =========================================
+                 13. OWNER APP REPORTS (SYSTEM COMPLAINTS)
+            ========================================== -->
+            <section id="owner-app-reports" class="dashboard-section">
+                <div class="section-header-row">
+                    <div>
+                        <h1>Report About the App</h1>
+                        <p class="section-subtitle">Encountered an issue or glitch with the Nestora Owner Portal? Submit a report directly to the Platform Administrator.</p>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-top: 20px;">
+                    <!-- Report App Form -->
+                    <div class="profile-card">
+                        <div class="profile-card-header">
+                            <h2>Submit App Report</h2>
+                        </div>
+                        <form id="ownerAppReportForm" class="profile-form-padding" onsubmit="submitOwnerAppReport(event)">
+                            <div class="form-group-custom">
+                                <label>Report Category *</label>
+                                <select id="ownerAppReportCategory" required>
+                                    <option value="Bug Report / System Glitch">🐛 Bug Report / System Glitch</option>
+                                    <option value="Property / Room Management Bug">🏢 Property / Room Management Bug</option>
+                                    <option value="Payment / Revenue Tracking Issue">💳 Payment / Revenue Tracking Issue</option>
+                                    <option value="Join Request / Tenant Allocation Bug">👥 Join Request / Allocation Bug</option>
+                                    <option value="Feature Suggestion / Enhancement">💡 Feature Suggestion / Enhancement</option>
+                                    <option value="UI & Dashboard Display Issue">🎨 UI & Dashboard Display Issue</option>
+                                    <option value="Other Technical Problem">⚙️ Other Technical Problem</option>
+                                </select>
+                            </div>
+                            <div class="form-group-custom">
+                                <label>Issue Title *</label>
+                                <input type="text" id="ownerAppReportSubject" placeholder="Brief summary of the issue..." required>
+                            </div>
+                            <div class="form-group-custom">
+                                <label>Description & Details *</label>
+                                <textarea id="ownerAppReportDesc" rows="4" placeholder="Describe the problem, affected property or feature, steps to reproduce..." required style="width: 100%; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px; font-size: 13px; font-family: inherit;"></textarea>
+                            </div>
+                            <button type="submit" id="ownerAppReportSubmitBtn" class="primary-dashboard-btn mt-3" style="width: 100%;">
+                                🚀 Submit Report to Administrator
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Submitted Reports History -->
+                    <div>
+                        <div class="profile-card">
+                            <div class="profile-card-header">
+                                <h2>Your Submitted App Reports</h2>
+                            </div>
+                            <div id="ownerAppReportsListContainer" style="padding: 16px;">
+                                <div class="text-center py-4 text-muted">Loading your app reports...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- =========================================
+         ACTION MODALS
+    ========================================== -->
+
+    <!-- Modal 1: Add / Edit PG -->
+    <div id="ownerPgModal" class="modal-backdrop hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2 id="ownerPgModalTitle">Add New Property</h2>
+                <button class="modal-close-btn" onclick="closeOwnerModal('ownerPgModal')">&times;</button>
+            </div>
+            <form id="ownerPgForm" onsubmit="submitSavePg(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="modalPgDbId">
+                    <div class="form-grid-2">
+                        <div class="form-group-custom">
+                            <label>PG Name *</label>
+                            <input type="text" id="modalPgName" required placeholder="e.g. Nestora Comfort Stay">
+                        </div>
+                        <div class="form-group-custom">
+                            <label>Property Type *</label>
+                            <select id="modalPgType">
+                                <option value="Single / Double Sharing">Single / Double Sharing</option>
+                                <option value="Single Room">Single Room</option>
+                                <option value="Double Sharing">Double Sharing</option>
+                                <option value="Triple Sharing">Triple Sharing</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-grid-2">
+                        <div class="form-group-custom">
+                            <label>City *</label>
+                            <input type="text" id="modalPgCity" required value="Jamshedpur">
+                        </div>
+                        <div class="form-group-custom">
+                            <label>Pincode *</label>
+                            <input type="text" id="modalPgPincode" required value="831001">
+                        </div>
+                    </div>
+                    <div class="form-group-custom">
+                        <label>Address *</label>
+                        <input type="text" id="modalPgAddress" required placeholder="Street, Locality, Landmark">
+                    </div>
+                    <div class="form-grid-2">
+                        <div class="form-group-custom">
+                            <label>Gender Allowed *</label>
+                            <select id="modalPgGender">
+                                <option value="All">All / Unisex</option>
+                                <option value="Male">Boys / Male Only</option>
+                                <option value="Female">Girls / Female Only</option>
+                            </select>
+                        </div>
+                        <div class="form-group-custom">
+                            <label>PG Status</label>
+                            <select id="modalPgStatus">
+                                <option value="approved">Active / Approved</option>
+                                <option value="pending">Under Review</option>
+                                <option value="rejected">Inactive / Closed</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-grid-2">
+                        <div class="form-group-custom">
+                            <label>Monthly Rent (₹) *</label>
+                            <input type="number" id="modalPgRent" required min="1000" step="100" value="8000">
+                        </div>
+                        <div class="form-group-custom">
+                            <label>Security Deposit (₹) *</label>
+                            <input type="number" id="modalPgDeposit" required min="0" step="100" value="8000">
+                        </div>
+                    </div>
+                    <div class="form-grid-2">
+                        <div class="form-group-custom">
+                            <label>Google Maps Latitude</label>
+                            <input type="number" id="modalPgLat" step="any" value="22.8046">
+                        </div>
+                        <div class="form-group-custom">
+                            <label>Google Maps Longitude</label>
+                            <input type="number" id="modalPgLng" step="any" value="86.2029">
+                        </div>
+                    </div>
+                    <div class="form-group-custom">
+                        <label>Description & Amenities</label>
+                        <textarea id="modalPgDesc" rows="3" placeholder="WiFi, AC, Power Backup, RO Water, 3 Meals, 24/7 Security..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary-custom" onclick="closeOwnerModal('ownerPgModal')">Cancel</button>
+                    <button type="submit" class="primary-dashboard-btn" id="modalPgSaveBtn">Save Property</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 2: Add / Edit Room -->
+    <div id="ownerRoomModal" class="modal-backdrop hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2 id="ownerRoomModalTitle">Add Room</h2>
+                <button class="modal-close-btn" onclick="closeOwnerModal('ownerRoomModal')">&times;</button>
+            </div>
+            <form id="ownerRoomForm" onsubmit="submitSaveRoom(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="modalRoomDbId">
+                    <div class="form-group-custom" id="modalRoomPgSelectGroup">
+                        <label>Target PG Property *</label>
+                        <select id="modalRoomPgId" required></select>
+                    </div>
+                    <div class="form-grid-2">
+                        <div class="form-group-custom">
+                            <label>Room Number *</label>
+                            <input type="text" id="modalRoomNumber" required placeholder="e.g. 101, 102, 201">
+                        </div>
+                        <div class="form-group-custom">
+                            <label>Room Type *</label>
+                            <select id="modalRoomType">
+                                <option value="Single Room">Single Room</option>
+                                <option value="Double Sharing">Double Sharing</option>
+                                <option value="Triple Sharing">Triple Sharing</option>
+                                <option value="Four Sharing">Four Sharing</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-grid-2">
+                        <div class="form-group-custom">
+                            <label>Monthly Rent (₹) *</label>
+                            <input type="number" id="modalRoomRent" required min="500" step="100" value="7500">
+                        </div>
+                        <div class="form-group-custom" id="modalRoomBedCountGroup">
+                            <label>Initial Beds to Create *</label>
+                            <select id="modalRoomBedCount">
+                                <option value="1">1 Bed (Bed 1)</option>
+                                <option value="2">2 Beds (Bed A, Bed B)</option>
+                                <option value="3">3 Beds (Bed A, B, C)</option>
+                                <option value="4">4 Beds (Bed A, B, C, D)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary-custom" onclick="closeOwnerModal('ownerRoomModal')">Cancel</button>
+                    <button type="submit" class="primary-dashboard-btn">Save Room</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 3: Add / Edit Bed -->
+    <div id="ownerBedModal" class="modal-backdrop hidden">
+        <div class="modal-box modal-sm">
+            <div class="modal-header">
+                <h2 id="ownerBedModalTitle">Add Bed</h2>
+                <button class="modal-close-btn" onclick="closeOwnerModal('ownerBedModal')">&times;</button>
+            </div>
+            <form id="ownerBedForm" onsubmit="submitSaveBed(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="modalBedRoomId">
+                    <input type="hidden" id="modalBedDbId">
+                    <div class="form-group-custom">
+                        <label>Bed Label / Number *</label>
+                        <input type="text" id="modalBedNumber" required placeholder="e.g. Bed C or Bed 3">
+                    </div>
+                    <div class="form-group-custom">
+                        <label>Initial Status *</label>
+                        <select id="modalBedStatus">
+                            <option value="available">Available</option>
+                            <option value="occupied">Occupied</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary-custom" onclick="closeOwnerModal('ownerBedModal')">Cancel</button>
+                    <button type="submit" class="primary-dashboard-btn">Save Bed</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 4: Approve Join Request with Room & Bed Picker -->
+    <div id="ownerApproveRequestModal" class="modal-backdrop hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>Approve Join Request</h2>
+                <button class="modal-close-btn" onclick="closeOwnerModal('ownerApproveRequestModal')">&times;</button>
+            </div>
+            <form id="ownerApproveRequestForm" onsubmit="submitApproveRequest(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="approveRequestId">
+                    <input type="hidden" id="approveRequestPgId">
+                    <div class="approval-summary-card">
+                        <div><strong>Tenant:</strong> <span id="approveTenantName">-</span> (<span id="approveTenantId">-</span>)</div>
+                        <div><strong>Property:</strong> <span id="approvePgName">-</span></div>
+                        <div><strong>Preferred:</strong> <span id="approvePreferredSharing">-</span></div>
+                    </div>
+
+                    <h3 class="mt-4 mb-2">Select Room & Bed for Tenant:</h3>
+                    <p class="text-muted text-sm mb-3">Choose an available bed in this PG to allocate to the tenant. The bed status will automatically update to Occupied.</p>
+
+                    <div id="approveRoomsBedList" class="approve-rooms-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary-custom" onclick="closeOwnerModal('ownerApproveRequestModal')">Cancel</button>
+                    <button type="submit" class="primary-dashboard-btn success-btn" id="confirmApproveBtn">
+                        ✅ Confirm Approval & Allocate Bed
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 5: View Tenant Full Details -->
+    <div id="ownerTenantDetailsModal" class="modal-backdrop hidden">
+        <div class="modal-box modal-lg">
+            <div class="modal-header">
+                <h2>Tenant Profile & History</h2>
+                <button class="modal-close-btn" onclick="closeOwnerModal('ownerTenantDetailsModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="tenantDetailsModalContent">
+                <!-- Populated dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="primary-dashboard-btn" onclick="closeOwnerModal('ownerTenantDetailsModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 6: Record Offline Payment -->
+    <div id="ownerRecordPaymentModal" class="modal-backdrop hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>Record Tenant Payment</h2>
+                <button class="modal-close-btn" onclick="closeOwnerModal('ownerRecordPaymentModal')">&times;</button>
+            </div>
+            <form id="ownerRecordPaymentForm" onsubmit="submitRecordPayment(event)">
+                <div class="modal-body">
+                    <div class="form-group-custom">
+                        <label>Select Tenant *</label>
+                        <select id="recordPayTenantSelect" required onchange="handlePayTenantSelectChange()"></select>
+                    </div>
+                    <div class="form-group-custom">
+                        <label>PG Property *</label>
+                        <input type="text" id="recordPayPgName" readonly class="input-readonly">
+                        <input type="hidden" id="recordPayPgId">
+                    </div>
+                    <div class="form-grid-2">
+                        <div class="form-group-custom">
+                            <label>Amount (₹) *</label>
+                            <input type="number" id="recordPayAmount" required min="100" step="50" value="8000">
+                        </div>
+                        <div class="form-group-custom">
+                            <label>Payment Purpose *</label>
+                            <select id="recordPayFor">
+                                <option value="Monthly Rent">Monthly Rent</option>
+                                <option value="Security Deposit">Security Deposit</option>
+                                <option value="Maintenance Fee">Maintenance Fee</option>
+                                <option value="Electricity / Water Bill">Electricity / Water Bill</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-grid-2">
+                        <div class="form-group-custom">
+                            <label>Payment Month *</label>
+                            <input type="text" id="recordPayMonth" required placeholder="e.g. October 2026">
+                        </div>
+                        <div class="form-group-custom">
+                            <label>Payment Method *</label>
+                            <select id="recordPayMethod">
+                                <option value="Cash">Cash</option>
+                                <option value="UPI / GPay">UPI / GPay</option>
+                                <option value="Bank Transfer">Bank Transfer</option>
+                                <option value="Cheque">Cheque</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group-custom">
+                        <label>Payment Status *</label>
+                        <select id="recordPayStatus">
+                            <option value="success">Paid / Success</option>
+                            <option value="pending">Pending</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary-custom" onclick="closeOwnerModal('ownerRecordPaymentModal')">Cancel</button>
+                    <button type="submit" class="primary-dashboard-btn">Save Payment & Generate Receipt</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 7: Printable Receipt Modal -->
+    <div id="ownerReceiptModal" class="modal-backdrop hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>Payment Receipt</h2>
+                <button class="modal-close-btn" onclick="closeOwnerModal('ownerReceiptModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="receipt-wrapper" id="printableReceiptArea">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary-custom" onclick="closeOwnerModal('ownerReceiptModal')">Close</button>
+                <button type="button" class="primary-dashboard-btn" onclick="printOwnerReceipt()">🖨️ Print Receipt</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 8: Create / Edit Notice -->
+    <div id="ownerNoticeModal" class="modal-backdrop hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2 id="ownerNoticeModalTitle">Post Notice to PG Tenants</h2>
+                <button class="modal-close-btn" onclick="closeOwnerModal('ownerNoticeModal')">&times;</button>
+            </div>
+            <form id="ownerNoticeForm" onsubmit="submitSaveNotice(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="modalNoticeId">
+                    <div class="form-group-custom">
+                        <label>Target PG Property *</label>
+                        <select id="modalNoticePgId" required></select>
+                    </div>
+                    <div class="form-grid-2">
+                        <div class="form-group-custom">
+                            <label>Notice Title *</label>
+                            <input type="text" id="modalNoticeTitle" required placeholder="e.g. Water Tank Cleaning Notice">
+                        </div>
+                        <div class="form-group-custom">
+                            <label>Priority *</label>
+                            <select id="modalNoticePriority">
+                                <option value="Normal">Normal</option>
+                                <option value="Important">Important</option>
+                                <option value="Urgent">Urgent</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group-custom">
+                        <label>Notice Message / Details *</label>
+                        <textarea id="modalNoticeMessage" rows="4" required placeholder="Write clear instructions for the residents..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary-custom" onclick="closeOwnerModal('ownerNoticeModal')">Cancel</button>
+                    <button type="submit" class="primary-dashboard-btn">Publish Notice</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 9: Update Complaint Status -->
+    <div id="ownerComplaintModal" class="modal-backdrop hidden">
+        <div class="modal-box modal-sm">
+            <div class="modal-header">
+                <h2>Update Complaint Status</h2>
+                <button class="modal-close-btn" onclick="closeOwnerModal('ownerComplaintModal')">&times;</button>
+            </div>
+            <form id="ownerComplaintForm" onsubmit="submitComplaintStatus(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="modalComplaintId">
+                    <div class="form-group-custom">
+                        <label>Complaint Reference</label>
+                        <input type="text" id="modalComplaintRef" readonly class="input-readonly">
+                    </div>
+                    <div class="form-group-custom">
+                        <label>Status *</label>
+                        <select id="modalComplaintStatus">
+                            <option value="in_progress">In Progress (Maintenance team assigned)</option>
+                            <option value="resolved">Resolved (Issue fixed)</option>
+                            <option value="submitted">Submitted (New)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary-custom" onclick="closeOwnerModal('ownerComplaintModal')">Cancel</button>
+                    <button type="submit" class="primary-dashboard-btn">Update Status</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+    <script src="robot.js"></script>
+</body>
+
+</html>

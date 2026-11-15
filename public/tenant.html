@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nestora | Tenant Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Interactive Map CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+    <nav class="dashboard-navbar">
+        <div class="dashboard-logo">
+            Nestora
+        </div>
+
+        <div class="user-area">
+            <div class="user-info">
+                <strong id="tenantName">Tenant</strong>
+                <span id="tenantId">NEST0000</span>
+            </div>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <!-- ================= DASHBOARD LAYOUT ================= -->
+    <div class="dashboard-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-title">
+                Tenant Panel
+            </div>
+
+            <button class="sidebar-item active" onclick="showSection('dashboard')">
+                🏠 Dashboard
+            </button>
+
+            <button class="sidebar-item" onclick="showSection('find-pg')">
+                🔍 Find PG
+            </button>
+
+            <button class="sidebar-item" onclick="showSection('my-pg')">
+                🏢 My PG
+            </button>
+
+            <button class="sidebar-item" onclick="showSection('bookings')">
+                📅 My Bookings
+            </button>
+
+            <button class="sidebar-item" onclick="showSection('payments')">
+                💳 Payments
+            </button>
+
+            <button class="sidebar-item" onclick="showSection('receipts')">
+                🧾 Receipts
+            </button>
+
+            <button class="sidebar-item" onclick="showSection('complaints')">
+                📝 Complaints
+            </button>
+
+            <button class="sidebar-item" onclick="showSection('notices')">
+                📢 Notices
+            </button>
+
+            <button class="sidebar-item" onclick="showSection('nearby-services')">
+                🏪 Nearby Services
+            </button>
+
+            <button class="sidebar-item" onclick="showSection('reviews')">
+                ⭐ Reviews
+            </button>
+
+            <button class="sidebar-item" onclick="showSection('profile')">
+                👤 Profile
+            </button>
+
+            <button class="sidebar-item" onclick="showSection('app-reports')">
+                🛠️ Report App Issue
+            </button>
+
+            <button class="sidebar-item" onclick="logout()" style="margin-top: 25px; color: #dc2626;">
+                🚪 Logout
+            </button>
+        </aside>
+
+        <!-- ================= MAIN CONTENT ================= -->
+        <main class="dashboard-content">
+
+            <!-- 1. DASHBOARD OVERVIEW -->
+            <section id="dashboard" class="dashboard-section active-section">
+                <h1>
+                    Welcome back, <span id="welcomeName">Tenant</span> 👋
+                </h1>
+                <p class="section-subtitle">
+                    Here's an overview of your Nestora account.
+                </p>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">🏢</div>
+                        <div>
+                            <span>My PG Stay</span>
+                            <strong id="pgStatus" style="font-size: 16px; display: block; margin-top: 4px;">Not joined</strong>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">📅</div>
+                        <div>
+                            <span>Bookings</span>
+                            <strong style="font-size: 16px; display: block; margin-top: 4px;">Active</strong>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">💳</div>
+                        <div>
+                            <span>Rent Status</span>
+                            <strong style="font-size: 16px; display: block; margin-top: 4px;">Current</strong>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">📝</div>
+                        <div>
+                            <span>Complaints</span>
+                            <strong style="font-size: 16px; display: block; margin-top: 4px;">0 Open</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <h2>Quick Actions</h2>
+                    <button class="primary-dashboard-btn" onclick="showSection('find-pg')">🔍 Find a PG</button>
+                    <button class="primary-dashboard-btn" onclick="showSection('payments')">💳 Pay Rent</button>
+                    <button class="primary-dashboard-btn" onclick="showSection('complaints')">📝 Raise Complaint</button>
+                    <button class="primary-dashboard-btn" onclick="showSection('profile')">👤 View Profile</button>
+                </div>
+            </section>
+
+            <!-- 2. FIND PG -->
+            <section id="find-pg" class="dashboard-section">
+                <div class="find-pg-header">
+                    <div>
+                        <h1 style="margin-bottom: 6px;">Find Your Perfect PG</h1>
+                        <p class="section-subtitle" style="margin-bottom: 0;">
+                            Explore verified PGs & hostels on an interactive map with live bed availability, transparent pricing, and instant join requests.
+                        </p>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button class="btn-secondary" onclick="openApiKeyModal()">
+                            🗺️ Map Engine
+                        </button>
+                        <button class="primary-dashboard-btn" onclick="refreshNearbyPgs()">
+                            🔄 Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Location Search Card -->
+                <div class="location-search-card">
+                    <div class="search-input-row">
+                        <div class="search-input-field">
+                            <span class="loc-search-icon">📍</span>
+                            <input
+                                type="text"
+                                id="pgLocationInput"
+                                placeholder="Enter area, city, landmark or full address"
+                                onkeydown="if(event.key==='Enter') executeLocationSearch()"
+                                oninput="toggleClearSearchBtn()"
+                                autocomplete="off"
+                            >
+                            <button id="clearLocSearchBtn" class="clear-search-btn" onclick="clearLocationInput()" style="display: none;" title="Clear">✕</button>
+                        </div>
+
+                        <button class="primary-dashboard-btn search-submit-btn" onclick="executeLocationSearch()">
+                            🔍 Search
+                        </button>
+
+                        <button class="geo-location-btn" onclick="useCurrentLocation()" id="currentLocBtn" title="Use current GPS location">
+                            📍 Use My Current Location
+                        </button>
+                    </div>
+
+                    <!-- Quick Localities Suggestions -->
+                    <div class="quick-localities-bar">
+                        <span class="ql-label">Suggested in Jamshedpur:</span>
+                        <button class="ql-chip active" onclick="searchByLocality('Sakchi', this)">📍 Sakchi (Mannat, Nemat)</button>
+                        <button class="ql-chip" onclick="searchByLocality('Kasidih', this)">📍 Kasidih (Bhagban, Shree Radhe)</button>
+                        <button class="ql-chip" onclick="searchByLocality('Bistupur', this)">📍 Bistupur (Elite Boys)</button>
+                        <button class="ql-chip" onclick="searchByLocality('Kadma', this)">📍 Kadma (Green Leaf, Blossom)</button>
+                        <button class="ql-chip" onclick="searchByLocality('Sonari', this)">📍 Sonari (Sai Residency)</button>
+                        <button class="ql-chip" onclick="searchByLocality('Jamshedpur', this)">🌟 All Jamshedpur</button>
+                    </div>
+                </div>
+
+                <!-- Interactive Map Wrapper -->
+                <div class="map-view-wrapper">
+                    <div class="map-header-bar">
+                        <div class="map-status-text" id="mapStatusIndicator">
+                            📍 Showing nearby PGs around <strong id="currentLocationLabel">Sakchi, Jamshedpur</strong>
+                        </div>
+                        <div class="map-legend">
+                            <span class="legend-item"><span class="legend-pin nestora-pin"></span> Nestora Verified PG</span>
+                            <span class="legend-item"><span class="legend-pin google-pin"></span> Google-listed Place</span>
+                            <span class="legend-item"><span class="legend-pin user-pin"></span> Search Center</span>
+                        </div>
+                    </div>
+
+                    <div id="pgInteractiveMap" class="pg-map-container">
+                        <div id="mapLoadingOverlay" style="position: absolute; inset: 0; background: rgba(248, 250, 252, 0.85); display: flex; align-items: center; justify-content: center; z-index: 999;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 30px;">🔄</div>
+                                <div style="font-size: 14px; font-weight: 700; color: #334155; margin-top: 8px;">Loading Interactive Map...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters & Sort Panel -->
+                <div class="filters-sort-panel">
+                    <div class="filters-row-main">
+                        <div class="filter-item">
+                            <label>Distance</label>
+                            <select id="filterDistance" onchange="applyFiltersAndFetch()">
+                                <option value="25">Any Distance (up to 25 km)</option>
+                                <option value="1">Within 1 km</option>
+                                <option value="2">Within 2 km</option>
+                                <option value="5" selected>Within 5 km</option>
+                                <option value="10">Within 10 km</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-item">
+                            <label>Monthly Rent</label>
+                            <select id="filterRent" onchange="applyFiltersAndFetch()">
+                                <option value="0">Any Budget</option>
+                                <option value="6000">Under ₹6,000 / mo</option>
+                                <option value="7500">Under ₹7,500 / mo</option>
+                                <option value="9000">Under ₹9,000 / mo</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-item">
+                            <label>Gender Allowed</label>
+                            <select id="filterGender" onchange="applyFiltersAndFetch()">
+                                <option value="">All Genders</option>
+                                <option value="Female">🌸 Girls Only</option>
+                                <option value="Male">👔 Boys Only</option>
+                                <option value="Unisex">👥 Co-Living / Unisex</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-item">
+                            <label>Sharing Type</label>
+                            <select id="filterSharing" onchange="applyFiltersAndFetch()">
+                                <option value="">All Sharing Types</option>
+                                <option value="Single">Single Sharing</option>
+                                <option value="Double">Double Sharing</option>
+                                <option value="Triple">Triple Sharing</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-item">
+                            <label>Available Beds</label>
+                            <select id="filterBeds" onchange="applyFiltersAndFetch()">
+                                <option value="0">Any Availability</option>
+                                <option value="1">1+ Beds Available</option>
+                                <option value="2">2+ Beds Available</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-item">
+                            <label>Min Rating</label>
+                            <select id="filterRating" onchange="applyFiltersAndFetch()">
+                                <option value="0">All Ratings</option>
+                                <option value="4.0">⭐ 4.0 & above</option>
+                                <option value="4.5">⭐ 4.5 & above</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-item">
+                            <label>Sort By</label>
+                            <select id="filterSortBy" onchange="applyFiltersAndFetch()">
+                                <option value="nearest">📍 Nearest First</option>
+                                <option value="lowest_rent">💵 Lowest Rent</option>
+                                <option value="highest_rent">💎 Highest Rent</option>
+                                <option value="highest_rated">⭐ Highest Rated</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Amenities Checkboxes -->
+                    <div class="amenities-selection-row">
+                        <span class="amenity-label">Amenities:</span>
+                        <label class="amenity-check"><input type="checkbox" value="wifi" onchange="applyFiltersAndFetch()"> 📶 Wi-Fi</label>
+                        <label class="amenity-check"><input type="checkbox" value="food" onchange="applyFiltersAndFetch()"> 🍲 Food / Mess</label>
+                        <label class="amenity-check"><input type="checkbox" value="ac" onchange="applyFiltersAndFetch()"> ❄️ AC</label>
+                        <label class="amenity-check"><input type="checkbox" value="laundry" onchange="applyFiltersAndFetch()"> 🧺 Laundry</label>
+                        <label class="amenity-check"><input type="checkbox" value="parking" onchange="applyFiltersAndFetch()"> 🚗 Parking</label>
+                        <label class="amenity-check"><input type="checkbox" value="backup" onchange="applyFiltersAndFetch()"> ⚡ Power Backup</label>
+                        <label class="amenity-check"><input type="checkbox" value="cctv" onchange="applyFiltersAndFetch()"> 🛡️ CCTV</label>
+                        <label class="amenity-check"><input type="checkbox" value="attached_bathroom" onchange="applyFiltersAndFetch()"> 🚿 Attached Bath</label>
+                        <button class="reset-filter-btn" onclick="resetAllPgFilters()">🔄 Reset</button>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div class="results-header-row">
+                    <div>
+                        <h2>Nearby PGs</h2>
+                        <p class="results-count-sub" id="resultsCountSubtitle">Showing nearby verified PGs & hostels</p>
+                    </div>
+                    <div class="results-view-options">
+                        <span id="pgResultStatsBadge" class="results-badge">0 Found</span>
+                    </div>
+                </div>
+
+                <div id="nearbyPgResultsGrid" class="nearby-pg-grid">
+                    <div class="empty-state" style="grid-column: 1 / -1; padding: 40px 20px;">
+                        <div class="big-icon">⏳</div>
+                        <h2>Searching Nearby PGs...</h2>
+                        <p>Finding properties around your selected location.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. MY PG -->
+            <section id="my-pg" class="dashboard-section">
+                <div class="section-header-row">
+                    <div>
+                        <h1>🏢 My PG</h1>
+                        <p class="section-subtitle">
+                            Manage your current accommodation, room details, and owner verification.
+                        </p>
+                    </div>
+                    <button class="primary-dashboard-btn" onclick="loadMyPG()">
+                        🔄 Refresh Status
+                    </button>
+                </div>
+
+                <div id="myPgContainer">
+                    <div class="empty-state">
+                        <div class="big-icon">🏢</div>
+                        <h2>Loading My PG...</h2>
+                        <p>Please wait while we check your PG status.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. BOOKINGS -->
+            <section id="bookings" class="dashboard-section">
+                <h1>📅 My Bookings</h1>
+                <p class="section-subtitle">
+                    View your confirmed PG reservations, room allocations, and move-in details.
+                </p>
+
+                <div id="bookingsListContainer" style="margin-top: 20px;">
+                    <div class="empty-state">
+                        <div class="big-icon">📅</div>
+                        <h2>Loading Bookings...</h2>
+                        <p>Fetching your booking records.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. PAYMENTS -->
+            <section id="payments" class="dashboard-section">
+                <div class="section-header-row">
+                    <div>
+                        <h1>💳 Payments & Rent</h1>
+                        <p class="section-subtitle">
+                            Pay monthly rent securely and view your complete payment transaction history.
+                        </p>
+                    </div>
+                    <button class="primary-dashboard-btn" onclick="openPayRentModal()">
+                        💳 Pay Rent Now
+                    </button>
+                </div>
+
+                <!-- Current Month Rent Due Banner -->
+                <div id="rentDueBanner" style="display: none; background: #eff6ff; border: 2px solid #bfdbfe; border-radius: 16px; padding: 20px; margin-bottom: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+                        <div>
+                            <span class="badge badge-info" style="margin-bottom: 8px;">Active Due</span>
+                            <h2 style="margin: 8px 0 4px 0; font-size: 20px; color: #1e3a8a;">
+                                Monthly Rent for <span id="bannerMonth">Current Month</span>
+                            </h2>
+                            <p style="margin: 0; color: #475569; font-size: 14px;">
+                                Due Amount: <strong id="bannerAmount" style="color: #1e40af; font-size: 18px;">₹0</strong>
+                            </p>
+                        </div>
+                        <button class="primary-dashboard-btn" onclick="openPayRentModal()" style="padding: 12px 24px; font-size: 15px;">
+                            ⚡ Pay Now via UPI / Card
+                        </button>
+                    </div>
+                </div>
+
+                <h2 style="font-size: 18px; margin: 24px 0 12px 0;">Payment Transaction History</h2>
+                <div id="paymentsTableContainer">
+                    <div class="empty-state">
+                        <div class="big-icon">💳</div>
+                        <h2>No Payments Yet</h2>
+                        <p>Your payment history will appear here once you make your first payment.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. RECEIPTS -->
+            <section id="receipts" class="dashboard-section">
+                <h1>🧾 Digital Receipts</h1>
+                <p class="section-subtitle">
+                    Download or print verified digital rent receipts with official records.
+                </p>
+
+                <div id="receiptsListContainer" style="margin-top: 20px;">
+                    <div class="empty-state">
+                        <div class="big-icon">🧾</div>
+                        <h2>No Receipts Yet</h2>
+                        <p>Receipts are generated instantly after each successful rent or advance payment.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7. COMPLAINTS -->
+            <section id="complaints" class="dashboard-section">
+                <h1>📝 Complaints & Maintenance</h1>
+                <p class="section-subtitle">
+                    Raise maintenance tickets, plumbing/electrical requests, and track real-time resolution.
+                </p>
+
+                <div style="margin-top: 14px; padding: 10px 16px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; font-size: 13px; color: #166534; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                    <span>💡 <strong>Note:</strong> The form below is for PG maintenance grievances (water, electricity, food, room).</span>
+                    <a href="javascript:void(0)" onclick="showSection('app-reports')" style="color: #15803d; font-weight: 700; text-decoration: underline;">Have an issue with the Nestora App? Report App Issue to Admin &rarr;</a>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-top: 20px;">
+                    <!-- Raise Complaint Form -->
+                    <div class="content-card">
+                        <h2 style="font-size: 18px; margin-bottom: 16px;">Raise New Complaint</h2>
+                        <form id="raiseComplaintForm" class="styled-form" onsubmit="submitComplaint(event)">
+                            <div class="form-group">
+                                <label>Complaint Title *</label>
+                                <input type="text" id="complaintTitle" placeholder="e.g. Geyser not working, Tap leaking..." required>
+                            </div>
+                            <div class="form-group">
+                                <label>Category *</label>
+                                <select id="complaintCategory" required>
+                                    <option value="Plumbing">🚰 Plumbing</option>
+                                    <option value="Electrical">⚡ Electrical / AC / Geyser</option>
+                                    <option value="Cleaning">🧹 Room & Washroom Cleaning</option>
+                                    <option value="Wi-Fi">📶 Wi-Fi & Internet</option>
+                                    <option value="Food & Mess">🍲 Food & Mess Quality</option>
+                                    <option value="Noise & Disturbance">🔊 Noise & Disturbance</option>
+                                    <option value="Other">📝 Other Issue</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Detailed Description *</label>
+                                <textarea id="complaintDesc" placeholder="Please describe the issue in detail so the owner can resolve it quickly..." required></textarea>
+                            </div>
+                            <button type="submit" class="primary-dashboard-btn" style="padding: 12px; font-weight: 700; width: 100%; justify-content: center;">
+                                Submit Complaint
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Complaints History -->
+                    <div>
+                        <h2 style="font-size: 18px; margin-bottom: 16px;">Your Complaints History</h2>
+                        <div id="complaintsListContainer">
+                            <div class="empty-state">
+                                <div class="big-icon">📝</div>
+                                <h2>No Complaints</h2>
+                                <p>You currently have no open or past complaints.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 8. NOTICES -->
+            <section id="notices" class="dashboard-section">
+                <h1>📢 PG Notices & Announcements</h1>
+                <p class="section-subtitle">
+                    Important announcements, festival notices, and maintenance alerts from your PG owner.
+                </p>
+
+                <div id="noticesListContainer" style="margin-top: 20px;">
+                    <div class="empty-state">
+                        <div class="big-icon">📢</div>
+                        <h2>No Notices Available</h2>
+                        <p>New announcements posted by your PG owner will appear here.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 9. NEARBY SERVICES -->
+            <section id="nearby-services" class="dashboard-section">
+                <h1>🏪 Nearby Services & Essentials</h1>
+                <p class="section-subtitle">
+                    Discover top-rated tiffin mess, laundry, gyms, pharmacies, and transit hubs near your PG.
+                </p>
+
+                <!-- Search and Stats row -->
+                <div class="search-input-row" style="margin-top: 18px; margin-bottom: 14px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                    <div class="search-input-field" style="max-width: 480px; flex: 1;">
+                        <span class="loc-search-icon">🔍</span>
+                        <input
+                            type="text"
+                            id="nearbyServiceSearchInput"
+                            placeholder="Search by service name, food mess, gym, laundry, medicine, or area..."
+                            oninput="searchNearbyServices(this.value)"
+                            autocomplete="off"
+                        >
+                    </div>
+                    <div id="servicesCountBadge" class="results-badge" style="background:#eff6ff; color:#2563eb; padding:8px 16px; border-radius:10px; font-weight:700; border:1px solid #bfdbfe;">
+                        Showing All Services
+                    </div>
+                </div>
+
+                <div class="tab-pills" style="margin-top: 15px;">
+                    <button class="tab-pill active" onclick="filterNearbyServices('All', this)">🌟 All Services</button>
+                    <button class="tab-pill" onclick="filterNearbyServices('Food & Mess', this)">🍲 Food & Mess</button>
+                    <button class="tab-pill" onclick="filterNearbyServices('Laundry', this)">🧺 Laundry</button>
+                    <button class="tab-pill" onclick="filterNearbyServices('Gym', this)">💪 Gym & Fitness</button>
+                    <button class="tab-pill" onclick="filterNearbyServices('Pharmacy', this)">💊 24/7 Pharmacy</button>
+                    <button class="tab-pill" onclick="filterNearbyServices('Grocery', this)">🛒 Grocery & Mart</button>
+                    <button class="tab-pill" onclick="filterNearbyServices('Transit', this)">🚌 Transit & Metro</button>
+                </div>
+
+                <div id="servicesListContainer" class="services-grid" style="margin-top: 20px;"></div>
+            </section>
+
+            <!-- 10. REVIEWS -->
+            <section id="reviews" class="dashboard-section">
+                <h1>⭐ PG Reviews & Ratings</h1>
+                <p class="section-subtitle">
+                    Share your honest feedback to help future tenants and help your PG owner improve.
+                </p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-top: 20px;">
+                    <div class="content-card">
+                        <h2 style="font-size: 18px; margin-bottom: 16px;">Write a Review</h2>
+                        <form id="writeReviewForm" class="styled-form" onsubmit="submitReview(event)">
+                            <div class="form-group">
+                                <label>Overall Rating *</label>
+                                <div class="star-rating-input" id="starRatingInput">
+                                    <span onclick="setStarRating(1)" class="active">★</span>
+                                    <span onclick="setStarRating(2)" class="active">★</span>
+                                    <span onclick="setStarRating(3)" class="active">★</span>
+                                    <span onclick="setStarRating(4)" class="active">★</span>
+                                    <span onclick="setStarRating(5)" class="active">★</span>
+                                </div>
+                                <input type="hidden" id="selectedStarRating" value="5">
+                            </div>
+                            <div class="form-group">
+                                <label>Your Review *</label>
+                                <textarea id="reviewText" placeholder="Share your experience regarding food, cleanliness, Wi-Fi, atmosphere, and owner behavior..." required></textarea>
+                            </div>
+                            <button type="submit" class="primary-dashboard-btn" style="padding: 12px; font-weight: 700; width: 100%; justify-content: center;">
+                                Submit Review
+                            </button>
+                        </form>
+                    </div>
+
+                    <div>
+                        <h2 style="font-size: 18px; margin-bottom: 16px;">Recent Reviews</h2>
+                        <div id="reviewsListContainer">
+                            <div class="empty-state">
+                                <div class="big-icon">⭐</div>
+                                <h2>No Reviews Yet</h2>
+                                <p>Be the first tenant to leave a review for your PG!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 11. PROFILE -->
+            <section id="profile" class="dashboard-section">
+                <div class="section-header-row">
+                    <div>
+                        <h1>👤 Tenant Profile</h1>
+                        <p class="section-subtitle">
+                            Manage your personal information and account security.
+                        </p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="primary-dashboard-btn" onclick="openEditTenantProfileModal()">
+                            ✏️ Edit Profile
+                        </button>
+                    </div>
+                </div>
+
+                <div class="profile-two-col">
+                    <!-- Profile Details Card -->
+                    <div class="profile-card">
+                        <div class="profile-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                            <h2>Personal Information</h2>
+                            <button class="btn-secondary" onclick="openEditTenantProfileModal()" style="padding: 6px 14px; font-size: 13px;">
+                                ✏️ Edit
+                            </button>
+                        </div>
+                        <div class="profile-form-padding">
+                            <div class="profile-row" style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9;">
+                                <strong>Full Name</strong>
+                                <span id="profileName">-</span>
+                            </div>
+                            <div class="profile-row" style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9;">
+                                <strong>Tenant ID</strong>
+                                <span id="profileId" style="font-weight: 700; color: #2563eb;">-</span>
+                            </div>
+                            <div class="profile-row" style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9;">
+                                <strong>Email Address</strong>
+                                <span id="profileEmail">-</span>
+                            </div>
+                            <div class="profile-row" style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9;">
+                                <strong>Phone Number</strong>
+                                <span id="profilePhone">-</span>
+                            </div>
+                            <div class="profile-row" style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9;">
+                                <strong>Address / City</strong>
+                                <span id="profileAddress">-</span>
+                            </div>
+                            <div class="profile-row" style="display: flex; justify-content: space-between; padding: 12px 0;">
+                                <strong>Account Role</strong>
+                                <span class="badge badge-info">Tenant</span>
+                            </div>
+                            <div style="margin-top: 20px; padding-top: 14px; border-top: 1px solid #f1f5f9; display: flex; justify-content: flex-end;">
+                                <button type="button" class="primary-dashboard-btn" onclick="openEditTenantProfileModal()" style="display: inline-flex; align-items: center; gap: 8px;">
+                                    ✏️ Edit Profile Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Change Password Card (just like owner profile part) -->
+                    <div class="profile-card">
+                        <div class="profile-card-header">
+                            <h2>Account Security</h2>
+                        </div>
+                        <form id="tenantChangePasswordForm" onsubmit="submitTenantChangePassword(event)" class="profile-form-padding">
+                            <div class="form-group-custom">
+                                <label>Current Password</label>
+                                <input type="password" id="tenantOldPassword" required placeholder="Enter current password">
+                            </div>
+                            <div class="form-group-custom">
+                                <label>New Password</label>
+                                <input type="password" id="tenantNewPassword" required minlength="6" placeholder="At least 6 characters">
+                            </div>
+                            <div class="form-group-custom">
+                                <label>Confirm New Password</label>
+                                <input type="password" id="tenantConfirmPassword" required minlength="6" placeholder="Repeat new password">
+                            </div>
+                            <div id="tenantPasswordChangeMsg" class="form-feedback-msg"></div>
+                            <button type="submit" class="primary-dashboard-btn mt-3" id="tenantChangePwdBtn">
+                                🔒 Update Password
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 12. APP REPORTS (SYSTEM COMPLAINTS) -->
+            <section id="app-reports" class="dashboard-section">
+                <h1>🛠️ Report About the App</h1>
+                <p class="section-subtitle">
+                    Encountered a bug, glitch, payment issue, or have a suggestion for the Nestora App? Submit it directly to the platform administrator.
+                </p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-top: 20px;">
+                    <!-- Report App Form -->
+                    <div class="content-card">
+                        <h2 style="font-size: 18px; margin-bottom: 16px;">Submit App Report</h2>
+                        <form id="tenantAppReportForm" class="styled-form" onsubmit="submitTenantAppReport(event)">
+                            <div class="form-group">
+                                <label>Report Category *</label>
+                                <select id="tenantAppReportCategory" required>
+                                    <option value="Bug Report / App Glitch">🐛 Bug Report / App Glitch</option>
+                                    <option value="Payment / Billing Issue">💳 Payment / Billing Issue</option>
+                                    <option value="Booking / Room Listing Issue">🏠 Booking / Room Listing Issue</option>
+                                    <option value="UI & Display Glitch">🎨 UI & Display Glitch</option>
+                                    <option value="Feature Suggestion">💡 Feature Suggestion</option>
+                                    <option value="Account / Login Problem">🔐 Account / Login Problem</option>
+                                    <option value="Other Technical Issue">⚙️ Other Technical Issue</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Issue Title *</label>
+                                <input type="text" id="tenantAppReportSubject" placeholder="Brief summary of the app problem..." required>
+                            </div>
+                            <div class="form-group">
+                                <label>Description & Steps to Reproduce *</label>
+                                <textarea id="tenantAppReportDesc" rows="4" placeholder="Describe the issue, which page or button, what happened, and what you expected..." required></textarea>
+                            </div>
+                            <button type="submit" id="tenantAppReportSubmitBtn" class="primary-dashboard-btn" style="width: 100%;">
+                                Submit App Report to Admin
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Submitted Reports History -->
+                    <div>
+                        <h2 style="font-size: 18px; margin-bottom: 16px;">Your Submitted App Reports</h2>
+                        <div id="tenantAppReportsListContainer">
+                            <div class="empty-state">
+                                <div class="big-icon">🛠️</div>
+                                <h2>No App Reports Yet</h2>
+                                <p>If you encounter any app bugs or glitches, report them here and track admin resolution.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- =========================================
+         MODALS
+    ========================================== -->
+
+    <!-- 1. Request Sent Success Modal -->
+    <div id="requestSuccessModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeRequestSuccessModal()">
+        <div class="modal-box" style="max-width: 480px;">
+            <div class="success-modal-box">
+                <div class="success-icon-badge">✅</div>
+                <h2 style="font-size: 22px; color: #0f172a; margin: 0;">Request Sent Successfully</h2>
+                <div class="pending-status-pill">Status: Pending</div>
+                <p id="requestSuccessMessage" style="color: #64748b; font-size: 14px; line-height: 1.5; margin: 0 0 24px 0;">
+                    Your joining request has been dispatched to the PG owner. As soon as the owner verifies your request, this PG will appear active in your My PG tab.
+                </p>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button class="btn-secondary" onclick="closeRequestSuccessModal()">
+                        Stay on Find PG
+                    </button>
+                    <button class="primary-dashboard-btn" onclick="closeRequestSuccessModal(); showSection('my-pg');">
+                        Go to My PG 🏢
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. PG Details & Room Selector Modal -->
+    <div id="pgDetailsModal" class="modal-backdrop hidden" onclick="if(event.target===this) closePgDetailsModal()">
+        <div class="modal-box" style="max-width: 760px;">
+            <div class="modal-header">
+                <div>
+                    <h2 id="modalPgName" style="margin: 0; font-size: 22px;">PG Details</h2>
+                    <p id="modalPgLocation" style="margin: 4px 0 0 0; color: #64748b; font-size: 13px;">📍 Location</p>
+                </div>
+                <button class="modal-close-btn" onclick="closePgDetailsModal()">✕</button>
+            </div>
+
+            <div class="modal-body" style="padding: 24px;">
+                <div id="modalCoverImgWrapper" style="height: 220px; border-radius: 14px; overflow: hidden; margin-bottom: 20px; position: relative;">
+                    <img id="modalCoverImg" src="" alt="PG Cover" style="width: 100%; height: 100%; object-fit: cover;">
+                    <div style="position: absolute; bottom: 12px; left: 12px; display: flex; gap: 8px;">
+                        <span id="modalGenderBadge" class="badge badge-info">Unisex</span>
+                        <span class="verified-badge">🛡️ Google Listed Place</span>
+                    </div>
+                </div>
+
+                <p id="modalPgDesc" style="color: #475569; line-height: 1.6; font-size: 14px; margin-bottom: 20px;">
+                    Description
+                </p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px;">
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px;">
+                        <div style="font-size: 12px; color: #64748b; font-weight: 600;">Monthly Rent</div>
+                        <div id="modalRent" style="font-size: 18px; font-weight: 800; color: #1e3a8a;">₹0</div>
+                    </div>
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px;">
+                        <div style="font-size: 12px; color: #64748b; font-weight: 600;">Security Deposit</div>
+                        <div id="modalDeposit" style="font-size: 18px; font-weight: 800; color: #0f172a;">₹0</div>
+                    </div>
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px;">
+                        <div style="font-size: 12px; color: #64748b; font-weight: 600;">Tenant Rating</div>
+                        <div id="modalRating" style="font-size: 18px; font-weight: 800; color: #b45309;">⭐ 4.6</div>
+                    </div>
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px;">
+                        <div style="font-size: 12px; color: #64748b; font-weight: 600;">Distance</div>
+                        <div id="modalDistance" style="font-size: 18px; font-weight: 800; color: #2563eb;">-</div>
+                    </div>
+                </div>
+                
+
+                <!-- Rooms Grid -->
+                <div class="room-selection-container">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <h3 style="font-size: 16px; color: #0f172a; margin: 0;">🛏️ Rooms & Available Beds</h3>
+                        <small style="color: #64748b;">Live availability</small>
+                    </div>
+                    <div id="modalRoomsList" class="rooms-list"></div>
+                </div>
+
+                <div style="margin-top: 24px;">
+                    <h3 style="font-size: 16px; color: #0f172a; margin-bottom: 10px;">✨ Verified Amenities</h3>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <span class="badge badge-neutral">📶 Wi-Fi</span>
+                        <span class="badge badge-neutral">🍲 3 Meals Included</span>
+                        <span class="badge badge-neutral">⚡ Power Backup</span>
+                        <span class="badge badge-neutral">🛡️ CCTV Security</span>
+                        <span class="badge badge-neutral">🧺 Laundry</span>
+                        <span class="badge badge-neutral">🚿 Attached Bathroom</span>
+                        <span class="badge badge-neutral">🚗 Two-Wheeler Parking</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+                <div id="modalSelectedBedInfo" style="font-size: 14px; color: #475569;">
+                    Ready to join this PG?
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-secondary" onclick="closePgDetailsModal()">
+                        Close
+                    </button>
+                    <button id="modalRequestJoinBtn" class="btn-card-join" onclick="sendJoinRequestFromModal()" style="padding: 10px 22px; font-size: 14px;">
+                        🚀 Request to Join
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Google Maps Settings Modal -->
+    <div id="gmapsKeyModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeApiKeyModal()">
+        <div class="modal-box" style="max-width: 520px;">
+            <div class="modal-header">
+                <h2 style="margin: 0; font-size: 18px;">🗺️ Google Maps Settings</h2>
+                <button class="modal-close-btn" onclick="closeApiKeyModal()">✕</button>
+            </div>
+            <div class="modal-body" style="padding: 24px;">
+                <p style="color: #475569; font-size: 14px; margin-bottom: 16px;">
+                    Nestora supports the official <strong>Google Maps Platform API</strong> for interactive mapping, street-level geocoding, and satellite views.
+                </p>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px; display: block;">Google Maps API Key (Optional)</label>
+                    <input type="text" id="gmapsApiKeyInput" placeholder="AIzaSy..." style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-family: inherit;">
+                    <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">
+                        Leave blank to use the high-performance OpenStreetMap / Leaflet engine automatically.
+                    </small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeApiKeyModal()">
+                    Cancel
+                </button>
+                <button class="primary-dashboard-btn" onclick="saveGoogleMapsKey()">
+                    Save & Apply
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Pay Monthly Rent Modal -->
+    <div id="payRentModal" class="modal-backdrop hidden" onclick="if(event.target===this) closePayRentModal()">
+        <div class="modal-box" style="max-width: 520px;">
+            <div class="modal-header">
+                <div>
+                    <h2 style="margin: 0; font-size: 20px;">Pay Monthly Rent</h2>
+                    <p id="payRentSubtitle" style="margin: 4px 0 0 0; color: #64748b; font-size: 13px;">Month: Current</p>
+                </div>
+                <button class="modal-close-btn" onclick="closePayRentModal()">✕</button>
+            </div>
+            <div class="modal-body" style="padding: 24px;">
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <div style="font-size: 14px; color: #64748b; font-weight: 600;">Total Payable Rent</div>
+                    <div id="payRentAmountDisplay" style="font-size: 32px; font-weight: 800; color: #2563eb; margin: 4px 0;">₹0</div>
+                    <div id="payRentPgNameDisplay" style="font-size: 13px; color: #475569;">PG Name</div>
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 8px; display: block;">Select Payment Mode *</label>
+                    <select id="rentPaymentMode" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px;">
+                        <option value="UPI">📱 Instant UPI (GPay / PhonePe / Paytm)</option>
+                        <option value="Debit Card">💳 Debit / Credit Card</option>
+                        <option value="Net Banking">🏦 Net Banking</option>
+                        <option value="Cash">💵 Cash Paid to Owner</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closePayRentModal()">
+                    Cancel
+                </button>
+                <button class="primary-dashboard-btn" onclick="submitRentPayment()">
+                    ✅ Confirm & Pay Rent
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Digital Receipt Modal -->
+    <div id="receiptModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeReceiptModal()">
+        <div class="modal-box" style="max-width: 540px;">
+            <div class="modal-header">
+                <h2 style="margin: 0; font-size: 18px;">Payment Receipt</h2>
+                <button class="modal-close-btn" onclick="closeReceiptModal()">✕</button>
+            </div>
+            <div class="modal-body" style="padding: 24px;">
+                <div id="receiptModalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeReceiptModal()">
+                    Close
+                </button>
+                <button class="primary-dashboard-btn" onclick="window.print()">
+                    🖨️ Print / Download
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Service Details Modal -->
+    <div id="serviceDetailsModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeServiceDetailsModal()">
+        <div class="modal-box" style="max-width: 620px;">
+            <div class="modal-header">
+                <h2 id="serviceModalTitle" style="margin: 0; font-size: 18px;">Service Details</h2>
+                <button class="modal-close-btn" onclick="closeServiceDetailsModal()">✕</button>
+            </div>
+            <div class="modal-body" id="serviceModalBody" style="padding: 24px;"></div>
+            <div class="modal-footer" id="serviceModalFooter">
+                <button class="btn-secondary" onclick="closeServiceDetailsModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. Edit Tenant Profile Modal -->
+    <div id="tenantProfileModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeEditTenantProfileModal()">
+        <div class="modal-box" style="max-width: 520px;">
+            <div class="modal-header">
+                <div>
+                    <h2 style="margin: 0; font-size: 20px;">✏️ Update Profile</h2>
+                    <p style="margin: 4px 0 0 0; color: #64748b; font-size: 13px;">Modify your contact details and home address</p>
+                </div>
+                <button class="modal-close-btn" onclick="closeEditTenantProfileModal()">✕</button>
+            </div>
+            <form id="tenantProfileForm" onsubmit="submitUpdateTenantProfile(event)">
+                <div class="modal-body" style="padding: 24px;">
+                    <div class="form-group-custom" style="margin-bottom: 16px;">
+                        <label style="display:block; margin-bottom: 6px; font-weight: 600; font-size: 13px; color: #334155;">Tenant ID (Permanent)</label>
+                        <input type="text" id="modalTenantId" readonly class="input-readonly" style="width: 100%; padding: 10px 14px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; color: #64748b; font-weight: 600; cursor: not-allowed;">
+                    </div>
+                    <div class="form-group-custom" style="margin-bottom: 16px;">
+                        <label style="display:block; margin-bottom: 6px; font-weight: 600; font-size: 13px; color: #334155;">Full Name *</label>
+                        <input type="text" id="modalTenantName" required placeholder="Enter full name" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
+                    </div>
+                    <div class="form-group-custom" style="margin-bottom: 16px;">
+                        <label style="display:block; margin-bottom: 6px; font-weight: 600; font-size: 13px; color: #334155;">Email Address (Account Login)</label>
+                        <input type="email" id="modalTenantEmail" readonly class="input-readonly" style="width: 100%; padding: 10px 14px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; color: #64748b; cursor: not-allowed;">
+                    </div>
+                    <div class="form-group-custom" style="margin-bottom: 16px;">
+                        <label style="display:block; margin-bottom: 6px; font-weight: 600; font-size: 13px; color: #334155;">Phone Number *</label>
+                        <input type="tel" id="modalTenantPhone" required placeholder="Enter mobile number" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
+                    </div>
+                    <div class="form-group-custom" style="margin-bottom: 8px;">
+                        <label style="display:block; margin-bottom: 6px; font-weight: 600; font-size: 13px; color: #334155;">Address / Permanent City</label>
+                        <input type="text" id="modalTenantAddress" placeholder="e.g. Sakchi, Jamshedpur" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
+                    </div>
+                </div>
+                <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 12px; padding: 16px 24px; background: #f8fafc; border-top: 1px solid #e2e8f0; border-radius: 0 0 16px 16px;">
+                    <button type="button" class="btn-secondary" onclick="closeEditTenantProfileModal()">Cancel</button>
+                    <button type="submit" class="primary-dashboard-btn" id="saveTenantProfileBtn">💾 Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="app.js"></script>
+    <script src="robot.js"></script>
+</body>
+
+</html>

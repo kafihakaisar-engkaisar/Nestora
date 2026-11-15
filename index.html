@@ -1,0 +1,464 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>Nestora | Welcome</title>
+
+<link rel="stylesheet" href="style.css">
+
+
+</head>
+
+<body>
+
+<!-- ================= INTERACTIVE PRELOADER ================= -->
+<div id="appPreloader" class="app-preloader" role="status" aria-live="polite" aria-label="Loading Nestora">
+    <!-- Interactive Canvas Background -->
+    <canvas id="preloaderCanvas" class="preloader-canvas"></canvas>
+
+    <!-- Ambient Glowing Backdrop -->
+    <div class="preloader-backdrop">
+        <div class="glow-orb glow-orb-1"></div>
+        <div class="glow-orb glow-orb-2"></div>
+    </div>
+
+    <!-- Centered Interactive Card with 3D Parallax & Physics -->
+    <div class="preloader-content" id="preloaderCard">
+        <!-- Floating Interactive Feature Badges -->
+        <div class="preloader-chip chip-left" title="Click to interact">
+            <span class="chip-dot"></span> 🛡️ Verified PGs
+        </div>
+        <div class="preloader-chip chip-right" title="Click to interact">
+            <span class="chip-dot"></span> ⚡ Instant Rent Pay
+        </div>
+
+        <div class="preloader-icon-wrapper" id="preloaderLogoWrapper">
+            <div class="preloader-pulse-ring ring-1"></div>
+            <div class="preloader-pulse-ring ring-2"></div>
+            <div class="preloader-icon-box" id="preloaderIconBox">
+                <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="preloader-brand">
+            <h1 class="preloader-title">Nestora</h1>
+            <p class="preloader-tagline">Find <span>•</span> Stay <span>•</span> Manage</p>
+        </div>
+
+        <!-- Numeric Counter & Progress Indicator -->
+        <div class="preloader-stats">
+            <span class="preloader-counter" id="preloaderCounter">0%</span>
+        </div>
+
+        <div class="preloader-loader-wrapper">
+            <div class="preloader-progress-track">
+                <div class="preloader-progress-bar" id="preloaderProgressBar"></div>
+            </div>
+        </div>
+
+        <p class="preloader-status-text" id="preloaderStatusText">Initializing Nestora platform...</p>
+
+        <!-- Interactive Skip / Enter Button -->
+        <button id="skipPreloaderBtn" class="preloader-enter-btn" type="button" aria-label="Enter Nestora directly">
+            <span>Enter Nestora</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+        <span class="preloader-tip">Press <strong>Space</strong> or tap anywhere to enter</span>
+    </div>
+</div>
+<noscript>
+    <style>
+        #appPreloader { display: none !important; }
+    </style>
+</noscript>
+
+<!-- ================= NAVBAR ================= -->
+
+<nav class="navbar">
+
+    <div class="logo">
+        Nestora
+    </div>
+
+    <div class="nav-right" style="display: flex; gap: 10px;">
+        <a href="owner-auth.html" class="nav-box owner-box">
+            Owner
+        </a>
+        <a href="admin-auth.html" class="nav-box" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca;">
+            Admin 🛡️
+        </a>
+    </div>
+
+</nav>
+
+
+<!-- ================= WELCOME SECTION ================= -->
+
+<main class="welcome-page">
+
+    <!-- Ambient Glowing Backdrop -->
+    <div class="welcome-bg-glows">
+        <div class="welcome-orb orb-1"></div>
+        <div class="welcome-orb orb-2"></div>
+    </div>
+
+    <div class="welcome-container">
+        <!-- Main Interactive Hero Card -->
+        <div class="welcome-card" id="interactiveWelcomeCard">
+            
+            <div class="welcome-badge">
+                <span class="badge-pulse"></span>
+                <span>Smart Living Ecosystem</span>
+            </div>
+
+            <h1>Welcome to <span>Nestora</span></h1>
+
+            <p class="tagline">
+                Find <span>•</span> Stay <span>•</span> Manage
+            </p>
+
+            <p class="description">
+                The modern, hassle-free PG living platform for tenants and property owners. Seamless onboarding, verified spaces, and instant grievance management.
+            </p>
+
+            <!-- Interactive Role Selector Grid -->
+            <div class="role-selector-grid">
+                <a href="tenant-auth.html" class="role-card active-role">
+                    <div class="role-icon-box tenant-role">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+                    <div class="role-info">
+                        <strong>Tenant Portal</strong>
+                        <span>Browse, book & stay</span>
+                    </div>
+                    <span class="role-arrow">➔</span>
+                </a>
+
+                <a href="owner-auth.html" class="role-card">
+                    <div class="role-icon-box owner-role">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    </div>
+                    <div class="role-info">
+                        <strong>PG Owner Portal</strong>
+                        <span>Manage rooms & tenants</span>
+                    </div>
+                    <span class="role-arrow">➔</span>
+                </a>
+
+                <a href="admin-auth.html" class="role-card admin-role-card">
+                    <div class="role-icon-box admin-role">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <div class="role-info">
+                        <strong>Admin Portal</strong>
+                        <span>Platform governance</span>
+                    </div>
+                    <span class="role-arrow">➔</span>
+                </a>
+            </div>
+
+            <!-- Primary Action Buttons -->
+            <div class="welcome-buttons">
+                <a href="tenant-auth.html" class="btn-interactive primary">
+                    <span>Sign In</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </a>
+
+                <a href="tenant-auth.html?mode=signup" class="btn-interactive secondary">
+                    <span>Sign Up</span>
+                </a>
+            </div>
+
+            <!-- Trust & Feature Strip -->
+            <div class="welcome-feature-strip">
+                <div class="feature-pill">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    <span>100% Verified PGs</span>
+                </div>
+                <div class="feature-pill">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                    <span>Instant Rent Tracker</span>
+                </div>
+                <div class="feature-pill">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                    <span>Smart Maintenance</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</main>
+
+<script>
+    (function() {
+        // -------------------------------------------------------------
+        // 1. Interactive Particle Constellation Canvas
+        // -------------------------------------------------------------
+        const canvas = document.getElementById("preloaderCanvas");
+        const ctx = canvas ? canvas.getContext("2d") : null;
+        let animationFrameId = null;
+        let particles = [];
+        let ripples = [];
+        const particleCount = 42;
+        const mouse = { x: null, y: null, radius: 130 };
+
+        function initCanvas() {
+            if (!canvas || !ctx) return;
+            resizeCanvas();
+            particles = [];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.7,
+                    vy: (Math.random() - 0.5) * 0.7,
+                    radius: Math.random() * 2 + 1.2,
+                    color: Math.random() > 0.4 ? "rgba(56, 189, 248, " : "rgba(129, 140, 248, ",
+                    alpha: Math.random() * 0.6 + 0.3
+                });
+            }
+        }
+
+        function resizeCanvas() {
+            if (!canvas) return;
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener("resize", resizeCanvas);
+
+        window.addEventListener("mousemove", (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        window.addEventListener("mouseleave", () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        // Shockwave ripple on click / tap
+        window.addEventListener("click", (e) => {
+            const preloader = document.getElementById("appPreloader");
+            if (preloader && !preloader.classList.contains("preloader-hidden")) {
+                ripples.push({
+                    x: e.clientX,
+                    y: e.clientY,
+                    radius: 4,
+                    maxRadius: 180,
+                    alpha: 0.8
+                });
+            }
+        });
+
+        function animateParticles() {
+            if (!ctx || !canvas) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Render & update ripples
+            for (let i = ripples.length - 1; i >= 0; i--) {
+                const r = ripples[i];
+                r.radius += 4.5;
+                r.alpha -= 0.025;
+                if (r.alpha <= 0 || r.radius >= r.maxRadius) {
+                    ripples.splice(i, 1);
+                    continue;
+                }
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(56, 189, 248, ${r.alpha})`;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            // Render & update particles
+            for (let i = 0; i < particles.length; i++) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                // Connect lines between nearby particles
+                for (let j = i + 1; j < particles.length; j++) {
+                    const p2 = particles[j];
+                    const dx = p.x - p2.x;
+                    const dy = p.y - p2.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 100) {
+                        const lineAlpha = (1 - dist / 100) * 0.25;
+                        ctx.strokeStyle = `rgba(56, 189, 248, ${lineAlpha})`;
+                        ctx.lineWidth = 0.8;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+
+                // Mouse interaction (gravity & connection)
+                if (mouse.x !== null && mouse.y !== null) {
+                    const mdx = mouse.x - p.x;
+                    const mdy = mouse.y - p.y;
+                    const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+                    if (mdist < mouse.radius) {
+                        const mAlpha = (1 - mdist / mouse.radius) * 0.6;
+                        ctx.strokeStyle = `rgba(129, 140, 248, ${mAlpha})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(mouse.x, mouse.y);
+                        ctx.stroke();
+                    }
+                }
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = p.color + p.alpha + ")";
+                ctx.fill();
+            }
+
+            animationFrameId = requestAnimationFrame(animateParticles);
+        }
+
+        initCanvas();
+        animateParticles();
+
+        // -------------------------------------------------------------
+        // 2. Dynamic Progress & Interactive Dismissal
+        // -------------------------------------------------------------
+        const preloader = document.getElementById("appPreloader");
+        const counterEl = document.getElementById("preloaderCounter");
+        const progressBar = document.getElementById("preloaderProgressBar");
+        const statusTextEl = document.getElementById("preloaderStatusText");
+        const skipBtn = document.getElementById("skipPreloaderBtn");
+
+        let progress = 0;
+        let isDismissed = false;
+        const progressDuration = 1500; // ms to reach 100% naturally
+        const startTime = performance.now();
+
+        const statusSteps = [
+            { at: 0, text: "Initializing Nestora platform..." },
+            { at: 30, text: "Connecting verified PG hubs..." },
+            { at: 65, text: "Securing tenancy & owner services..." },
+            { at: 92, text: "Welcome to Nestora! ✨" }
+        ];
+
+        function updateProgress(now) {
+            if (isDismissed) return;
+            const elapsed = now - startTime;
+            const targetProgress = Math.min(100, Math.floor((elapsed / progressDuration) * 100));
+
+            if (targetProgress > progress) {
+                progress = targetProgress;
+                if (counterEl) counterEl.textContent = progress + "%";
+                if (progressBar) progressBar.style.width = progress + "%";
+
+                // Update status text
+                for (let i = statusSteps.length - 1; i >= 0; i--) {
+                    if (progress >= statusSteps[i].at) {
+                        if (statusTextEl && statusTextEl.textContent !== statusSteps[i].text) {
+                            statusTextEl.textContent = statusSteps[i].text;
+                        }
+                        break;
+                    }
+                }
+            }
+
+            if (progress >= 100) {
+                setTimeout(dismissPreloader, 250);
+            } else {
+                requestAnimationFrame(updateProgress);
+            }
+        }
+
+        requestAnimationFrame(updateProgress);
+
+        function dismissPreloader() {
+            if (!preloader || isDismissed) return;
+            isDismissed = true;
+            if (counterEl) counterEl.textContent = "100%";
+            if (progressBar) progressBar.style.width = "100%";
+            if (statusTextEl) statusTextEl.textContent = "Welcome to Nestora! ✨";
+
+            preloader.classList.add("preloader-hidden");
+            setTimeout(() => {
+                preloader.style.display = "none";
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            }, 600);
+        }
+
+        // Skip Button Event
+        if (skipBtn) {
+            skipBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                dismissPreloader();
+            });
+        }
+
+        // Keyboard Space / Enter Shortcut
+        window.addEventListener("keydown", (e) => {
+            if (e.code === "Space" || e.code === "Enter") {
+                if (preloader && !isDismissed) {
+                    e.preventDefault();
+                    dismissPreloader();
+                }
+            }
+        });
+
+        // Click anywhere to enter if progress >= 25%
+        if (preloader) {
+            preloader.addEventListener("click", () => {
+                if (progress >= 25) {
+                    dismissPreloader();
+                }
+            });
+        }
+
+        // -------------------------------------------------------------
+        // 3. Interactive 3D Tilt on Hover (Preloader & Welcome Cards)
+        // -------------------------------------------------------------
+        function setup3DTilt(element, maxAngle) {
+            if (!element) return;
+            element.addEventListener("mousemove", (e) => {
+                const rect = element.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = ((y - centerY) / centerY) * -maxAngle;
+                const rotateY = ((x - centerX) / centerX) * maxAngle;
+
+                element.style.transform = "perspective(1000px) rotateX(" + rotateX.toFixed(2) + "deg) rotateY(" + rotateY.toFixed(2) + "deg) translateY(-2px)";
+            });
+
+            element.addEventListener("mouseleave", () => {
+                element.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)";
+            });
+        }
+
+        setup3DTilt(document.getElementById("preloaderCard"), 8);
+        setup3DTilt(document.getElementById("interactiveWelcomeCard"), 6);
+    })();
+</script>
+
+<script src="robot.js"></script>
+
+</body>
+
+</html>
+
